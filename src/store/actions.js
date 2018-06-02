@@ -40,9 +40,9 @@ const actions = {
     commit('polls', { polls });
 
   },
-  addPoll: async ({ state, commit, dispatch }, { query }) => {
+  addPoll: async ({ state, commit, dispatch }, { query, target }) => {
     Errors.assert(storePollChain.data, 'pollChain_undefined');
-    const res = await storePollChain.data.addPoll(query, 10, { from: state.address });
+    const res = await storePollChain.data.addPoll(query, target, { from: state.address });
     await Utils.getTransactionReceiptMined(res.tx);
     await dispatch('getPolls');
   },

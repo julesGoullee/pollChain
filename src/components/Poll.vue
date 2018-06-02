@@ -19,6 +19,13 @@
           v-model.trim="query"
           placeholder="Query..."
         >
+        <input
+          id="add-poll-target"
+          type="number"
+          step="1"
+          v-model.trim="target"
+          placeholder="Target contributor"
+        >
         <input id="add-poll-submit" type="submit" value="Validate">
       </form>
     </div>
@@ -44,6 +51,7 @@
     data: function () {
       return {
         query: '',
+        target: 100,
         errors: [],
         isSending: false
       };
@@ -58,7 +66,8 @@
         this.isSending = true;
 
         this.addPoll({
-          query: this.query
+          query: this.query,
+          target: this.target
         })
           .then(() => {
             this.query = '';
