@@ -4,8 +4,11 @@
       <div>Polls:</div>
       <div
         v-for="poll in polls"
-        v-bind:key="poll"
-      >{{ poll }}</div>
+        v-bind:key="JSON.stringify(poll)"
+      >
+        <div>{{ poll }}</div>
+        <button type="button" @click="onVote(poll.query)">Vote!</button>
+      </div>
     </div>
     <div>
       <div>Add poll:</div>
@@ -18,6 +21,16 @@
         >
         <input id="add-poll-submit" type="submit" value="Validate">
       </form>
+    </div>
+    <div v-if="errors.length === 0 && isSending" id="send-waiting">
+      Transaction is sending, Waiting....
+    </div>
+    <div v-if="errors.length > 0" id="errors">
+      <div>Error{{ errors.length > 1 ? "s" : "" }}: </div>
+      <div
+        v-for="error in errors"
+        v-bind:key="error"
+      >{{ error }}</div>
     </div>
   </div>
 </template>
@@ -39,7 +52,7 @@
       ...mapGetters(['polls'])
     },
     methods: {
-      ...mapActions(['addPoll']),
+      ...mapActions(['addPoll', 'vote']),
       onAddPool(e){
         this.errors = [];
         this.isSending = true;
@@ -57,8 +70,22 @@
           });
 
         e.preventDefault();
+      },
+      onVote(query){
+        this.errors = [];
+        this.isSending = true;
+
+        this.vote({ query })
+          .then(() => {
+            this.isSending = false;
+          })
+          .catch(error => {
+            this.errors.push(Errors.displayError(error));
+            this.isSending = false;
+          });
       }
     },
+
   };
 </script>
 

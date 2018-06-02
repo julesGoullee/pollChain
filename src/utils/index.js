@@ -11,7 +11,7 @@ const Utils = {
     while(receipt == null){
 
       receipt = await eth.getTransactionReceipt(txHash);
-      await Utils.wait(10000);//TODO
+      await Utils.wait(8000); //TODO
 
     }
 

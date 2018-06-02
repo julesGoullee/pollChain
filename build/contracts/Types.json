@@ -1,23 +1,23 @@
 {
   "contractName": "Types",
   "abi": [],
-  "bytecode": "0x605a602c600b82828239805160001a60731460008114601c57601e565bfe5b5030600052607381538281f30073000000000000000000000000000000000000000030146080604052600080fd00a265627a7a723058208ab8d5dec6facee78a271737f99b319c0990462fb802a846ff1595e79160f5666c6578706572696d656e74616cf50037",
-  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fd00a265627a7a723058208ab8d5dec6facee78a271737f99b319c0990462fb802a846ff1595e79160f5666c6578706572696d656e74616cf50037",
+  "bytecode": "0x605a602c600b82828239805160001a60731460008114601c57601e565bfe5b5030600052607381538281f30073000000000000000000000000000000000000000030146080604052600080fd00a265627a7a72305820d2d0b7f2c13867f25618351c9d9498cad7b6165ae9ef53fd022b91ac735e16266c6578706572696d656e74616cf50037",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fd00a265627a7a72305820d2d0b7f2c13867f25618351c9d9498cad7b6165ae9ef53fd022b91ac735e16266c6578706572696d656e74616cf50037",
   "sourceMap": "117:160:0:-;;132:2:-1;166:7;155:9;146:7;137:37;252:7;246:14;243:1;238:23;232:4;229:33;270:1;265:20;;;;222:63;;265:20;274:9;222:63;;298:9;295:1;288:20;328:4;319:7;311:22;352:7;343;336:24",
   "deployedSourceMap": "117:160:0:-;;;;;;;;",
-  "source": "pragma solidity ^0.4.23;\npragma experimental ABIEncoderV2;\n\nimport \"zeppelin-solidity/contracts/math/SafeMath.sol\";\n\nlibrary Types {\n\n  struct Poll {\n    address creator;\n    string query;\n    uint createdAt;\n    string kind;\n    uint target;\n    address[] contributors;\n  }\n\n}\n\ncontract PollChain {\n\n  using SafeMath for uint;\n\n  mapping(string => Types.Poll) internal polls;\n  string[] public pollsIndex;\n  uint public pollsCount;\n\n  constructor () public {\n\n    pollsCount = 0;\n\n  }\n\n  function () external payable {\n    revert();\n  }\n\n  function addPoll (string query, uint target) public returns (bool success){\n    polls[query].creator = msg.sender;\n    polls[query].createdAt = block.timestamp;\n    polls[query].query = query;\n    polls[query].target = target;\n    polls[query].kind = \"free\";\n    pollsIndex.push(query);\n    pollsCount = pollsCount.add(1);\n    return true;\n\n  }\n\n  function addPollSponsor (string query, uint target) public payable returns (bool success){\n    polls[query].creator = msg.sender;\n    polls[query].createdAt = block.timestamp;\n    polls[query].query = query;\n    polls[query].target = target;\n    polls[query].kind = \"sp\";\n    pollsIndex.push(query);\n    pollsCount = pollsCount.add(1);\n    return true;\n\n  }\n\n  function vote (string pollQuery) public returns (bool success){\n\n    require(polls[pollQuery].createdAt != 0);\n    uint contributorsLength = polls[pollQuery].contributors.length;\n\n    for (uint i=0; i < contributorsLength; i++) {\n\n      require(polls[pollQuery].contributors[i] != msg.sender);\n\n    }\n\n    polls[pollQuery].contributors.push(msg.sender);\n\n    return true;\n\n  }\n\n}\n",
+  "source": "pragma solidity ^0.4.23;\npragma experimental ABIEncoderV2;\n\nimport \"zeppelin-solidity/contracts/math/SafeMath.sol\";\n\nlibrary Types {\n\n  struct Poll {\n    address creator;\n    string query;\n    uint createdAt;\n    string kind;\n    uint target;\n    address[] contributors;\n  }\n\n}\n\ncontract PollChain {\n\n  using SafeMath for uint;\n\n  mapping(string => Types.Poll) internal polls;\n  string[] public pollsIndex;\n  uint public pollsCount;\n\n  constructor () public {\n\n    pollsCount = 0;\n\n  }\n\n  function () external payable {\n    revert();\n  }\n\n  function addPoll (string query, uint target) public returns (bool success){\n    polls[query].creator = msg.sender;\n    polls[query].createdAt = block.timestamp;\n    polls[query].query = query;\n    polls[query].target = target;\n    polls[query].kind = \"free\";\n    pollsIndex.push(query);\n    pollsCount = pollsCount.add(1);\n    return true;\n\n  }\n\n  function addPollSponsor (string query, uint target) public payable returns (bool success){\n    polls[query].creator = msg.sender;\n    polls[query].createdAt = block.timestamp;\n    polls[query].query = query;\n    polls[query].target = target;\n    polls[query].kind = \"sp\";\n    pollsIndex.push(query);\n    pollsCount = pollsCount.add(1);\n    return true;\n\n  }\n\n  function vote (string pollQuery) public returns (bool success){\n\n    require(polls[pollQuery].createdAt != 0);\n    uint contributorsLength = polls[pollQuery].contributors.length;\n\n    for (uint i=0; i < contributorsLength; i++) {\n\n      require(polls[pollQuery].contributors[i] != msg.sender);\n\n    }\n\n    polls[pollQuery].contributors.push(msg.sender);\n\n    return true;\n\n  }\n\n  function getPoll(string query) public view returns (\n    address,\n    string,\n    uint,\n    string,\n    uint,\n    uint\n  ){\n\n    return (\n      polls[query].creator,\n      polls[query].query,\n      polls[query].createdAt,\n      polls[query].kind,\n      polls[query].target,\n      polls[query].contributors.length\n    );\n\n  }\n\n}\n",
   "sourcePath": "/Users/jules/WebstormProjects/pollchain/contracts/PollChain.sol",
   "ast": {
     "absolutePath": "/Users/jules/WebstormProjects/pollchain/contracts/PollChain.sol",
     "exportedSymbols": {
       "PollChain": [
-        230
+        275
       ],
       "Types": [
         18
       ]
     },
-    "id": 231,
+    "id": 276,
     "nodeType": "SourceUnit",
     "nodes": [
       {
@@ -45,8 +45,8 @@
         "file": "zeppelin-solidity/contracts/math/SafeMath.sol",
         "id": 3,
         "nodeType": "ImportDirective",
-        "scope": 231,
-        "sourceUnit": 325,
+        "scope": 276,
+        "sourceUnit": 370,
         "src": "60:55:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -242,7 +242,7 @@
             "visibility": "public"
           }
         ],
-        "scope": 231,
+        "scope": 276,
         "src": "117:160:0"
       },
       {
@@ -251,9 +251,9 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 230,
+        "id": 275,
         "linearizedBaseContracts": [
-          230
+          275
         ],
         "name": "PollChain",
         "nodeType": "ContractDefinition",
@@ -265,10 +265,10 @@
               "id": 19,
               "name": "SafeMath",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 324,
+              "referencedDeclaration": 369,
               "src": "309:8:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SafeMath_$324",
+                "typeIdentifier": "t_contract$_SafeMath_$369",
                 "typeString": "library SafeMath"
               }
             },
@@ -290,7 +290,7 @@
             "id": 25,
             "name": "polls",
             "nodeType": "VariableDeclaration",
-            "scope": 230,
+            "scope": 275,
             "src": "331:44:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -337,7 +337,7 @@
             "id": 28,
             "name": "pollsIndex",
             "nodeType": "VariableDeclaration",
-            "scope": 230,
+            "scope": 275,
             "src": "379:26:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -373,7 +373,7 @@
             "id": 30,
             "name": "pollsCount",
             "nodeType": "VariableDeclaration",
-            "scope": 230,
+            "scope": 275,
             "src": "409:22:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -474,7 +474,7 @@
               "parameters": [],
               "src": "458:0:0"
             },
-            "scope": 230,
+            "scope": 275,
             "src": "436:49:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -496,10 +496,10 @@
                       "name": "revert",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        344,
-                        345
+                        389,
+                        390
                       ],
-                      "referencedDeclaration": 344,
+                      "referencedDeclaration": 389,
                       "src": "524:6:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_revert_pure$__$returns$__$",
@@ -547,7 +547,7 @@
               "parameters": [],
               "src": "518:0:0"
             },
-            "scope": 230,
+            "scope": 275,
             "src": "489:48:0",
             "stateMutability": "payable",
             "superFunction": null,
@@ -633,7 +633,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 339,
+                        "referencedDeclaration": 384,
                         "src": "644:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -738,7 +738,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 329,
+                        "referencedDeclaration": 374,
                         "src": "685:5:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -1183,7 +1183,7 @@
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 323,
+                        "referencedDeclaration": 368,
                         "src": "845:14:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -1341,7 +1341,7 @@
               ],
               "src": "601:14:0"
             },
-            "scope": 230,
+            "scope": 275,
             "src": "541:344:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -1427,7 +1427,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 339,
+                        "referencedDeclaration": 384,
                         "src": "1007:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -1532,7 +1532,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 329,
+                        "referencedDeclaration": 374,
                         "src": "1048:5:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -1977,7 +1977,7 @@
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 323,
+                        "referencedDeclaration": 368,
                         "src": "1206:14:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -2135,7 +2135,7 @@
               ],
               "src": "964:14:0"
             },
-            "scope": 230,
+            "scope": 275,
             "src": "889:357:0",
             "stateMutability": "payable",
             "superFunction": null,
@@ -2256,10 +2256,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        342,
-                        343
+                        387,
+                        388
                       ],
-                      "referencedDeclaration": 342,
+                      "referencedDeclaration": 387,
                       "src": "1319:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -2506,7 +2506,7 @@
                                   "name": "msg",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
-                                  "referencedDeclaration": 339,
+                                  "referencedDeclaration": 384,
                                   "src": "1531:3:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_magic_message",
@@ -2545,10 +2545,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              342,
-                              343
+                              387,
+                              388
                             ],
-                            "referencedDeclaration": 342,
+                            "referencedDeclaration": 387,
                             "src": "1487:7:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -2724,7 +2724,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 339,
+                          "referencedDeclaration": 384,
                           "src": "1591:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -2942,30 +2942,624 @@
               ],
               "src": "1298:14:0"
             },
-            "scope": 230,
+            "scope": 275,
             "src": "1250:376:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 273,
+              "nodeType": "Block",
+              "src": "1752:202:0",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "components": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "id": 246,
+                            "name": "polls",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 25,
+                            "src": "1774:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$17_storage_$",
+                              "typeString": "mapping(string memory => struct Types.Poll storage ref)"
+                            }
+                          },
+                          "id": 248,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 247,
+                            "name": "query",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 231,
+                            "src": "1780:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_string_memory_ptr",
+                              "typeString": "string memory"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "1774:12:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Poll_$17_storage",
+                            "typeString": "struct Types.Poll storage ref"
+                          }
+                        },
+                        "id": 249,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "creator",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 5,
+                        "src": "1774:20:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "id": 250,
+                            "name": "polls",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 25,
+                            "src": "1802:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$17_storage_$",
+                              "typeString": "mapping(string memory => struct Types.Poll storage ref)"
+                            }
+                          },
+                          "id": 252,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 251,
+                            "name": "query",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 231,
+                            "src": "1808:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_string_memory_ptr",
+                              "typeString": "string memory"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "1802:12:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Poll_$17_storage",
+                            "typeString": "struct Types.Poll storage ref"
+                          }
+                        },
+                        "id": 253,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "query",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 7,
+                        "src": "1802:18:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_string_storage",
+                          "typeString": "string storage ref"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "id": 254,
+                            "name": "polls",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 25,
+                            "src": "1828:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$17_storage_$",
+                              "typeString": "mapping(string memory => struct Types.Poll storage ref)"
+                            }
+                          },
+                          "id": 256,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 255,
+                            "name": "query",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 231,
+                            "src": "1834:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_string_memory_ptr",
+                              "typeString": "string memory"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "1828:12:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Poll_$17_storage",
+                            "typeString": "struct Types.Poll storage ref"
+                          }
+                        },
+                        "id": 257,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "createdAt",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 9,
+                        "src": "1828:22:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "id": 258,
+                            "name": "polls",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 25,
+                            "src": "1858:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$17_storage_$",
+                              "typeString": "mapping(string memory => struct Types.Poll storage ref)"
+                            }
+                          },
+                          "id": 260,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 259,
+                            "name": "query",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 231,
+                            "src": "1864:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_string_memory_ptr",
+                              "typeString": "string memory"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "1858:12:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Poll_$17_storage",
+                            "typeString": "struct Types.Poll storage ref"
+                          }
+                        },
+                        "id": 261,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "kind",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 11,
+                        "src": "1858:17:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_string_storage",
+                          "typeString": "string storage ref"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "id": 262,
+                            "name": "polls",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 25,
+                            "src": "1883:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$17_storage_$",
+                              "typeString": "mapping(string memory => struct Types.Poll storage ref)"
+                            }
+                          },
+                          "id": 264,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 263,
+                            "name": "query",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 231,
+                            "src": "1889:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_string_memory_ptr",
+                              "typeString": "string memory"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "1883:12:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Poll_$17_storage",
+                            "typeString": "struct Types.Poll storage ref"
+                          }
+                        },
+                        "id": 265,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "target",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 13,
+                        "src": "1883:19:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "expression": {
+                            "argumentTypes": null,
+                            "baseExpression": {
+                              "argumentTypes": null,
+                              "id": 266,
+                              "name": "polls",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 25,
+                              "src": "1910:5:0",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$17_storage_$",
+                                "typeString": "mapping(string memory => struct Types.Poll storage ref)"
+                              }
+                            },
+                            "id": 268,
+                            "indexExpression": {
+                              "argumentTypes": null,
+                              "id": 267,
+                              "name": "query",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 231,
+                              "src": "1916:5:0",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_string_memory_ptr",
+                                "typeString": "string memory"
+                              }
+                            },
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "nodeType": "IndexAccess",
+                            "src": "1910:12:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_Poll_$17_storage",
+                              "typeString": "struct Types.Poll storage ref"
+                            }
+                          },
+                          "id": 269,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "contributors",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 16,
+                          "src": "1910:25:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_address_$dyn_storage",
+                            "typeString": "address[] storage ref"
+                          }
+                        },
+                        "id": 270,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "length",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": null,
+                        "src": "1910:32:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "id": 271,
+                    "isConstant": false,
+                    "isInlineArray": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "TupleExpression",
+                    "src": "1766:182:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_address_$_t_string_storage_$_t_uint256_$_t_string_storage_$_t_uint256_$_t_uint256_$",
+                      "typeString": "tuple(address,string storage ref,uint256,string storage ref,uint256,uint256)"
+                    }
+                  },
+                  "functionReturnParameters": 245,
+                  "id": 272,
+                  "nodeType": "Return",
+                  "src": "1759:189:0"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 274,
+            "implemented": true,
+            "isConstructor": false,
+            "isDeclaredConst": true,
+            "modifiers": [],
+            "name": "getPoll",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 232,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 231,
+                  "name": "query",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1647:12:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 230,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1647:6:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1646:14:0"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 245,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 234,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1687:7:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 233,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1687:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 236,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1700:6:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 235,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1700:6:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 238,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1712:4:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 237,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1712:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 240,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1722:6:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 239,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1722:6:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 242,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1734:4:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 241,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1734:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 244,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1744:4:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 243,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1744:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1681:71:0"
+            },
+            "scope": 275,
+            "src": "1630:324:0",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
           }
         ],
-        "scope": 231,
-        "src": "279:1350:0"
+        "scope": 276,
+        "src": "279:1678:0"
       }
     ],
-    "src": "0:1630:0"
+    "src": "0:1958:0"
   },
   "legacyAST": {
     "absolutePath": "/Users/jules/WebstormProjects/pollchain/contracts/PollChain.sol",
     "exportedSymbols": {
       "PollChain": [
-        230
+        275
       ],
       "Types": [
         18
       ]
     },
-    "id": 231,
+    "id": 276,
     "nodeType": "SourceUnit",
     "nodes": [
       {
@@ -2993,8 +3587,8 @@
         "file": "zeppelin-solidity/contracts/math/SafeMath.sol",
         "id": 3,
         "nodeType": "ImportDirective",
-        "scope": 231,
-        "sourceUnit": 325,
+        "scope": 276,
+        "sourceUnit": 370,
         "src": "60:55:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -3190,7 +3784,7 @@
             "visibility": "public"
           }
         ],
-        "scope": 231,
+        "scope": 276,
         "src": "117:160:0"
       },
       {
@@ -3199,9 +3793,9 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 230,
+        "id": 275,
         "linearizedBaseContracts": [
-          230
+          275
         ],
         "name": "PollChain",
         "nodeType": "ContractDefinition",
@@ -3213,10 +3807,10 @@
               "id": 19,
               "name": "SafeMath",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 324,
+              "referencedDeclaration": 369,
               "src": "309:8:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SafeMath_$324",
+                "typeIdentifier": "t_contract$_SafeMath_$369",
                 "typeString": "library SafeMath"
               }
             },
@@ -3238,7 +3832,7 @@
             "id": 25,
             "name": "polls",
             "nodeType": "VariableDeclaration",
-            "scope": 230,
+            "scope": 275,
             "src": "331:44:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3285,7 +3879,7 @@
             "id": 28,
             "name": "pollsIndex",
             "nodeType": "VariableDeclaration",
-            "scope": 230,
+            "scope": 275,
             "src": "379:26:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3321,7 +3915,7 @@
             "id": 30,
             "name": "pollsCount",
             "nodeType": "VariableDeclaration",
-            "scope": 230,
+            "scope": 275,
             "src": "409:22:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3422,7 +4016,7 @@
               "parameters": [],
               "src": "458:0:0"
             },
-            "scope": 230,
+            "scope": 275,
             "src": "436:49:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -3444,10 +4038,10 @@
                       "name": "revert",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        344,
-                        345
+                        389,
+                        390
                       ],
-                      "referencedDeclaration": 344,
+                      "referencedDeclaration": 389,
                       "src": "524:6:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_revert_pure$__$returns$__$",
@@ -3495,7 +4089,7 @@
               "parameters": [],
               "src": "518:0:0"
             },
-            "scope": 230,
+            "scope": 275,
             "src": "489:48:0",
             "stateMutability": "payable",
             "superFunction": null,
@@ -3581,7 +4175,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 339,
+                        "referencedDeclaration": 384,
                         "src": "644:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -3686,7 +4280,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 329,
+                        "referencedDeclaration": 374,
                         "src": "685:5:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -4131,7 +4725,7 @@
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 323,
+                        "referencedDeclaration": 368,
                         "src": "845:14:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -4289,7 +4883,7 @@
               ],
               "src": "601:14:0"
             },
-            "scope": 230,
+            "scope": 275,
             "src": "541:344:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -4375,7 +4969,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 339,
+                        "referencedDeclaration": 384,
                         "src": "1007:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -4480,7 +5074,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 329,
+                        "referencedDeclaration": 374,
                         "src": "1048:5:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -4925,7 +5519,7 @@
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 323,
+                        "referencedDeclaration": 368,
                         "src": "1206:14:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -5083,7 +5677,7 @@
               ],
               "src": "964:14:0"
             },
-            "scope": 230,
+            "scope": 275,
             "src": "889:357:0",
             "stateMutability": "payable",
             "superFunction": null,
@@ -5204,10 +5798,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        342,
-                        343
+                        387,
+                        388
                       ],
-                      "referencedDeclaration": 342,
+                      "referencedDeclaration": 387,
                       "src": "1319:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -5454,7 +6048,7 @@
                                   "name": "msg",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
-                                  "referencedDeclaration": 339,
+                                  "referencedDeclaration": 384,
                                   "src": "1531:3:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_magic_message",
@@ -5493,10 +6087,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              342,
-                              343
+                              387,
+                              388
                             ],
-                            "referencedDeclaration": 342,
+                            "referencedDeclaration": 387,
                             "src": "1487:7:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -5672,7 +6266,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 339,
+                          "referencedDeclaration": 384,
                           "src": "1591:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -5890,18 +6484,612 @@
               ],
               "src": "1298:14:0"
             },
-            "scope": 230,
+            "scope": 275,
             "src": "1250:376:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 273,
+              "nodeType": "Block",
+              "src": "1752:202:0",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "components": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "id": 246,
+                            "name": "polls",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 25,
+                            "src": "1774:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$17_storage_$",
+                              "typeString": "mapping(string memory => struct Types.Poll storage ref)"
+                            }
+                          },
+                          "id": 248,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 247,
+                            "name": "query",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 231,
+                            "src": "1780:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_string_memory_ptr",
+                              "typeString": "string memory"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "1774:12:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Poll_$17_storage",
+                            "typeString": "struct Types.Poll storage ref"
+                          }
+                        },
+                        "id": 249,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "creator",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 5,
+                        "src": "1774:20:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "id": 250,
+                            "name": "polls",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 25,
+                            "src": "1802:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$17_storage_$",
+                              "typeString": "mapping(string memory => struct Types.Poll storage ref)"
+                            }
+                          },
+                          "id": 252,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 251,
+                            "name": "query",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 231,
+                            "src": "1808:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_string_memory_ptr",
+                              "typeString": "string memory"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "1802:12:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Poll_$17_storage",
+                            "typeString": "struct Types.Poll storage ref"
+                          }
+                        },
+                        "id": 253,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "query",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 7,
+                        "src": "1802:18:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_string_storage",
+                          "typeString": "string storage ref"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "id": 254,
+                            "name": "polls",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 25,
+                            "src": "1828:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$17_storage_$",
+                              "typeString": "mapping(string memory => struct Types.Poll storage ref)"
+                            }
+                          },
+                          "id": 256,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 255,
+                            "name": "query",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 231,
+                            "src": "1834:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_string_memory_ptr",
+                              "typeString": "string memory"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "1828:12:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Poll_$17_storage",
+                            "typeString": "struct Types.Poll storage ref"
+                          }
+                        },
+                        "id": 257,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "createdAt",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 9,
+                        "src": "1828:22:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "id": 258,
+                            "name": "polls",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 25,
+                            "src": "1858:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$17_storage_$",
+                              "typeString": "mapping(string memory => struct Types.Poll storage ref)"
+                            }
+                          },
+                          "id": 260,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 259,
+                            "name": "query",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 231,
+                            "src": "1864:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_string_memory_ptr",
+                              "typeString": "string memory"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "1858:12:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Poll_$17_storage",
+                            "typeString": "struct Types.Poll storage ref"
+                          }
+                        },
+                        "id": 261,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "kind",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 11,
+                        "src": "1858:17:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_string_storage",
+                          "typeString": "string storage ref"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "id": 262,
+                            "name": "polls",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 25,
+                            "src": "1883:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$17_storage_$",
+                              "typeString": "mapping(string memory => struct Types.Poll storage ref)"
+                            }
+                          },
+                          "id": 264,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 263,
+                            "name": "query",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 231,
+                            "src": "1889:5:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_string_memory_ptr",
+                              "typeString": "string memory"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "1883:12:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Poll_$17_storage",
+                            "typeString": "struct Types.Poll storage ref"
+                          }
+                        },
+                        "id": 265,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "target",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 13,
+                        "src": "1883:19:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "expression": {
+                            "argumentTypes": null,
+                            "baseExpression": {
+                              "argumentTypes": null,
+                              "id": 266,
+                              "name": "polls",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 25,
+                              "src": "1910:5:0",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$17_storage_$",
+                                "typeString": "mapping(string memory => struct Types.Poll storage ref)"
+                              }
+                            },
+                            "id": 268,
+                            "indexExpression": {
+                              "argumentTypes": null,
+                              "id": 267,
+                              "name": "query",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 231,
+                              "src": "1916:5:0",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_string_memory_ptr",
+                                "typeString": "string memory"
+                              }
+                            },
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "nodeType": "IndexAccess",
+                            "src": "1910:12:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_Poll_$17_storage",
+                              "typeString": "struct Types.Poll storage ref"
+                            }
+                          },
+                          "id": 269,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "contributors",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 16,
+                          "src": "1910:25:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_address_$dyn_storage",
+                            "typeString": "address[] storage ref"
+                          }
+                        },
+                        "id": 270,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "length",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": null,
+                        "src": "1910:32:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "id": 271,
+                    "isConstant": false,
+                    "isInlineArray": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "TupleExpression",
+                    "src": "1766:182:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_address_$_t_string_storage_$_t_uint256_$_t_string_storage_$_t_uint256_$_t_uint256_$",
+                      "typeString": "tuple(address,string storage ref,uint256,string storage ref,uint256,uint256)"
+                    }
+                  },
+                  "functionReturnParameters": 245,
+                  "id": 272,
+                  "nodeType": "Return",
+                  "src": "1759:189:0"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 274,
+            "implemented": true,
+            "isConstructor": false,
+            "isDeclaredConst": true,
+            "modifiers": [],
+            "name": "getPoll",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 232,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 231,
+                  "name": "query",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1647:12:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 230,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1647:6:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1646:14:0"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 245,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 234,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1687:7:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 233,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1687:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 236,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1700:6:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 235,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1700:6:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 238,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1712:4:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 237,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1712:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 240,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1722:6:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 239,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1722:6:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 242,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1734:4:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 241,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1734:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 244,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 274,
+                  "src": "1744:4:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 243,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1744:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1681:71:0"
+            },
+            "scope": 275,
+            "src": "1630:324:0",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
           }
         ],
-        "scope": 231,
-        "src": "279:1350:0"
+        "scope": 276,
+        "src": "279:1678:0"
       }
     ],
-    "src": "0:1630:0"
+    "src": "0:1958:0"
   },
   "compiler": {
     "name": "solc",
@@ -5909,5 +7097,5 @@
   },
   "networks": {},
   "schemaVersion": "2.0.0",
-  "updatedAt": "2018-06-02T21:24:29.417Z"
+  "updatedAt": "2018-06-02T22:58:09.231Z"
 }

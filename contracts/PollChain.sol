@@ -75,4 +75,24 @@ contract PollChain {
 
   }
 
+  function getPoll(string query) public view returns (
+    address,
+    string,
+    uint,
+    string,
+    uint,
+    uint
+  ){
+
+    return (
+      polls[query].creator,
+      polls[query].query,
+      polls[query].createdAt,
+      polls[query].kind,
+      polls[query].target,
+      polls[query].contributors.length
+    );
+
+  }
+
 }
