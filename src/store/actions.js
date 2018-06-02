@@ -2,19 +2,36 @@ import { getPollChain } from '@/contracts'
 import config from '@/../config'
 import Errors from '@/utils/errors';
 import storePollChain from '@/store/storePollChain';
+import Network from '@/network';
 
 const actions = {
-  nodeConnect: async ({ state, commit }) => {
+  nodeConnect: async ({ state, commit, dispatch }) => {
     Errors.assert(!state.nodeConnected, 'node_already_connected');
-    const pollChain = await getPollChain(config.CONTRACT_ADDRESS);
-    storePollChain.data = pollChain;
-    commit('nodeConnect');
+    storePollChain.data = await getPollChain(config.CONTRACT_ADDRESS);
+    const accounts = await Network.getAccounts();
+
+    commit('nodeConnect', { address: accounts[0]});
+    await dispatch('getPolls');
+
   },
   getPolls: async ({ state, commit }) => {
-    Errors.assert(!storePollChain.data, 'pollChain_undefined');
+    Errors.assert(storePollChain.data, 'pollChain_undefined');
 
-    const polls = await storePollChain.data.getPolls();
+    const pollsCount = (await storePollChain.data.pollsCount() ).toNumber();
+    const polls = [];
 
+    for(let i = 0; i < pollsCount; i++){
+
+      polls.push(await storePollChain.data.pollsIndex(i) );
+
+    }
+
+    commit('polls', { polls });
+
+  },
+  addPoll: async ({ state, commit, dispatch }, { query }) => {
+    Errors.assert(storePollChain.data, 'pollChain_undefined');
+    await storePollChain.data.addPoll(query, 10, { from: state.address });
   }
 };
 

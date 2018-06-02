@@ -1,7 +1,8 @@
 const state = {
   nodeConnected: false,
   pollChain: null,
-  polls: []
+  polls: [],
+  address: null
 };
 
 export default state;

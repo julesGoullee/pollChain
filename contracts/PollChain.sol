@@ -1,6 +1,8 @@
 pragma solidity ^0.4.23;
 pragma experimental ABIEncoderV2;
 
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
+
 library Types {
 
   struct Poll {
@@ -16,33 +18,43 @@ library Types {
 
 contract PollChain {
 
-  mapping(string => Types.Poll) internal polls;
-  mapping(string => Types.Poll) internal pollsCount;
+  using SafeMath for uint;
 
-  constructor () public {}
+  mapping(string => Types.Poll) internal polls;
+  string[] public pollsIndex;
+  uint public pollsCount;
+
+  constructor () public {
+
+    pollsCount = 0;
+
+  }
 
   function () external payable {
     revert();
   }
 
-  function addPoll (string query, uint target) public returns (Types.Poll poll){
+  function addPoll (string query, uint target) public returns (bool success){
     polls[query].creator = msg.sender;
     polls[query].createdAt = block.timestamp;
     polls[query].query = query;
     polls[query].target = target;
     polls[query].kind = "free";
-    return polls[query];
+    pollsIndex.push(query);
+    pollsCount = pollsCount.add(1);
+    return true;
 
   }
 
-  function addPollSponsor (string query, uint target) public payable returns (Types.Poll poll){
+  function addPollSponsor (string query, uint target) public payable returns (bool success){
     polls[query].creator = msg.sender;
     polls[query].createdAt = block.timestamp;
     polls[query].query = query;
     polls[query].target = target;
     polls[query].kind = "sp";
-
-    return polls[query];
+    pollsIndex.push(query);
+    pollsCount = pollsCount.add(1);
+    return true;
 
   }
 
