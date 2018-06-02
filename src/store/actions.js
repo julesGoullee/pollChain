@@ -3,6 +3,7 @@ import config from '@/../config'
 import Errors from '@/utils/errors';
 import storePollChain from '@/store/storePollChain';
 import Network from '@/network';
+import Utils from '@/utils';
 
 const actions = {
   nodeConnect: async ({ state, commit, dispatch }) => {
@@ -22,7 +23,8 @@ const actions = {
 
     for(let i = 0; i < pollsCount; i++){
 
-      polls.push(await storePollChain.data.pollsIndex(i) );
+      const poll = await storePollChain.data.pollsIndex(i);
+      polls.push(poll);
 
     }
 
@@ -31,7 +33,10 @@ const actions = {
   },
   addPoll: async ({ state, commit, dispatch }, { query }) => {
     Errors.assert(storePollChain.data, 'pollChain_undefined');
-    await storePollChain.data.addPoll(query, 10, { from: state.address });
+    const res = await storePollChain.data.addPoll(query, 10, { from: state.address });
+    await Utils.getTransactionReceiptMined(res.tx);
+    await dispatch('getPolls');
+
   }
 };
 
