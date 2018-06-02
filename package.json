@@ -50,5 +50,10 @@
     "deploy:kovan": "truffle migrate --network kovan",
     "deploy:ropsten": "truffle migrate --network ropsten",
     "deploy:mainnet": "truffle migrate --network mainnet"
+  },
+  "engines": {
+    "node": "8.11.x",
+    "npm": "5.5.x",
+    "yarn": "1.7.0"
   }
 }
