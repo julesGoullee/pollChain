@@ -13,6 +13,7 @@ library Types {
     string kind;
     uint target;
     address[] contributors;
+    uint contributorsReject;
   }
 
 }

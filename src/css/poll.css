@@ -1,7 +1,3 @@
-.kikou{
-    width: 10px;
-}
-
 .bloc-top{
 	background-color: red;
 	height: 250px;
@@ -24,7 +20,6 @@
     line-height: 1.1;
     text-align: left;
     margin-left: 100px;
-    position: left;
 }
 
 

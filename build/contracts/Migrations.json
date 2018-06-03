@@ -182,7 +182,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 387,
+                        "referencedDeclaration": 565,
                         "src": "146:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -286,7 +286,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 387,
+                        "referencedDeclaration": 565,
                         "src": "213:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -832,7 +832,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 387,
+                        "referencedDeclaration": 565,
                         "src": "146:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -936,7 +936,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 387,
+                        "referencedDeclaration": 565,
                         "src": "213:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -1375,31 +1375,7 @@
     "version": "0.4.24+commit.e67f0147.Emscripten.clang"
   },
   "networks": {
-    "3": {
-      "events": {},
-      "links": {},
-      "address": "0xc70af987628e97d455058a4e71d97317c114a7bf",
-      "transactionHash": "0x517e9319fa75406057641149c3d073ec15a8cad92c2a789fa50f08f76eb47410"
-    },
-    "1527972259434": {
-      "events": {},
-      "links": {},
-      "address": "0x009120e498c394116f35a1b5a333c13a5d02ddff",
-      "transactionHash": "0x276c2c061f02e874ae8331cf20c9410aeb2df3601de20719d291d80a4d9fd617"
-    },
-    "1527972941610": {
-      "events": {},
-      "links": {},
-      "address": "0x5ff35af7dddfa62fb4d77165731dd5fc31d296b6",
-      "transactionHash": "0x8bc5ba869257986755302572def8e78ee3ba3ba7cc1cf40d8b4d92b9b7b2c354"
-    },
-    "1527977145521": {
-      "events": {},
-      "links": {},
-      "address": "0x87f1a123d28c8d917e8f9afb54b084c863d70da2",
-      "transactionHash": "0x1e11200a0dfb413a0a56031d81c3120ae776fd9e0abab4157663818b9fe411ea"
-    },
-    "1527987881394": {
+    "1527997997329": {
       "events": {},
       "links": {},
       "address": "0x450093ce06c72c723e5b1f5a9fde56072d1d422a",
