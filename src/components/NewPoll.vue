@@ -1,108 +1,155 @@
 <template>
   <div>
-
-    <div class="bloc-title">
-      <div class="small-title">MY PETITION</div>
-      <div class="big-title">My petition to start <br>
-        to change the world
-      </div>
-    </div>
-
     <div>
-      <div v-if="errors.length === 0 && isSending" id="send-waiting">
-        Transaction is sending, Waiting....
+      <div class="bloc-title">
+        <div class="small-title">MY PETITION</div>
+        <div class="big-title">My petition to start <br>
+          to change the world
+        </div>
       </div>
-      <div v-if="errors.length > 0" id="errors">
-        <div>Error{{ errors.length > 1 ? "s" : "" }}: </div>
-        <div
-          v-for="error in errors"
-          v-bind:key="error"
-        >{{ error }}</div>
-      </div>
-    </div>
-
-    <form id="add-poll-form" @submit="onAddPool">
 
       <div class="form-group">
-        <div class="question-title"><label for="add-poll-title">Insert the title of your petition</label></div>
+        <div class="question-title"><label for="exampleFormControlInput1">Insert the title of your petition</label></div>
         <div class="question-description">
           This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
         </div>
-        <input
-          id="add-poll-title"
-          type="text"
-          v-model.trim="title"
-          class="form-control"
-          placeholder="Save the panda in Chongqing"
-        />
+        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Save the panda in Chongqing">
       </div>
 
-      <div class="form-group">
-        <div class="question-title"><label for="add-poll-query">Present the problem you want to solve</label></div>
-        <div class="question-description">
-          This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
-        </div>
-        <input
-          id="add-poll-query"
-          type="text"
-          v-model.trim="query"
-          class="form-control"
-          placeholder="Save the panda in Chongqing"
-        >
-      </div>
-
-      <div class="form-group">
-        <div class="question-title"><label for="add-poll-target">@target</label></div>
-        <div class="question-description">
-          @description
-        </div>
-        <input
-          id="add-poll-target"
-          type="number"
-          step="1"
-          v-model.trim="target"
-          placeholder="Target contributor"
-        >
-      </div>
-
-      <div class="form-group">
-        <div class="question-title"><label for="isSponsoring">Is this petition are sponsored ? </label>
+      <div>
+        <div class="question-title"><label for="exampleFormControlInput1">Is this petition are sponsored ? </label>
         </div>
         <div class="question-description">
           This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
         </div>
-        <label class="switch">
+
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          <label class="btn btn-secondary active">
+            <input type="radio" name="options" id="option1" autocomplete="off" checked> Yes
+          </label>
+          <label class="btn btn-secondary">
+            <input type="radio" name="options" id="option2" autocomplete="off"> No
+          </label>
+        </div>
+
+        <form id="add-poll-form" @submit="onAddPool">
           <input
-            type="checkbox"
-            id="isSponsoring" v-model="isSponsoring"
+            id="add-poll-title"
+            type="text"
+            v-model.trim="title"
+            placeholder="Title..."
           >
-          <span class="slider round"></span>
-        </label>
-        <div v-if="isSponsoring">Cost: {{ calcCost() }} ether</div>
+          <input
+            id="add-poll-query"
+            type="text"
+            v-model.trim="query"
+            placeholder="Query..."
+          >
+          <input
+            id="add-poll-target"
+            type="number"
+            step="1"
+            v-model.trim="target"
+            placeholder="Target contributor"
+          >
+          <label for="isSponsoring">is sponsoring</label>
+          <input type="checkbox" id="isSponsoring" v-model="isSponsoring">
+          <div v-if="isSponsoring">Cost: {{ calcCost() }} ether</div>
+          <input id="add-poll-submit" type="submit" value="Validate">
+        </form>
+      </div>
+
+      <div class="form-group">
+        <div class="question-title"><label for="exampleFormControlInput2">Present the problem you want to solve</label></div>
+        <div class="question-description">
+          This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
+        </div>
+        <input type="email" class="form-control" id="exampleFormControlInput2" placeholder="Save the panda in Chongqing">
       </div>
 
       <div class="form-group">
         <div class="question-title"><label >Add a photo</label></div>
+
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          <label class="btn btn-secondary active">
+            <input type="radio" name="options" id="option1" autocomplete="off" checked> Yes
+          </label>
+          <label class="btn btn-secondary">
+            <input type="radio" name="options" id="option2" autocomplete="off"> No
+          </label>
+        </div>
+
+        <form id="add-poll-form" @submit="onAddPool">
+          <input
+            id="add-poll"
+            type="text"
+            v-model.trim="query"
+            placeholder="Query..."
+          >
+          <input
+            id="add-poll-target"
+            type="number"
+            step="1"
+            v-model.trim="target"
+            placeholder="Target contributor"
+          >
+          <label for="isSponsoring">is sponsoring</label>
+          <input type="checkbox" id="isSponsoring" v-model="isSponsoring">
+          <div v-if="isSponsoring">Cost: {{ calcCost() }} ether</div>
+          <input id="add-poll-submit" type="submit" value="Validate">
+        </form>
+      </div>
+
+
+         <div class="form-group">
+        <div class="question-title"><label for="exampleFormControlInput1">Present the problem you want to solve</label></div>
         <div class="question-description">
           This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
         </div>
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">Upload</span>
-          </div>
-          <div class="custom-file">
-            <input type="file" class="custom-file-input" id="inputGroupFile01">
-            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-          </div>
+        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Save the panda in Chongqing">
         </div>
-        <img id='img-upload'/>
-      </div>
 
-      <button type="submit" class="btn btn-success">Success</button>
+                <div class="form-group">
+                        <div class="question-title"><label for="exampleFormControlInput1">Add a photo</label></div>
+                            <div class="question-description">
+                              This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
+                            </div>
 
-    </form>
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-default btn-file">
+                                    <input type="file" id="imgInp">
+                                </span>
+                            </span>
+                        </div>
+                        <img id='img-upload'/>
+                </div>
+          </div>
 
+
+
+
+
+    <button type="button" class="btn btn-success">Success</button>
+
+
+    <div v-if="errors.length === 0 && isSending" id="send-waiting">
+      Transaction is sending, Waiting....
+    </div>
+    <div v-if="errors.length > 0" id="errors">
+      <div>Error{{ errors.length > 1 ? "s" : "" }}: </div>
+      <div
+        v-for="error in errors"
+        v-bind:key="error"
+      >{{ error }}</div>
+    </div>
   </div>
+
+
+
+
+
+
 </template>
 
 <script>
