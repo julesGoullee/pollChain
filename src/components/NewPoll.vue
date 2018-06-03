@@ -39,9 +39,9 @@
       </div>
 
       <div class="form-group">
-        <div class="question-title"><label for="add-poll-target">@target</label></div>
+        <div class="question-title"><label for="add-poll-target">Expected number of signatures</label></div>
         <div class="question-description">
-          @description
+          <!--@description-->
         </div>
         <input
           id="add-poll-target"
@@ -73,7 +73,7 @@
         <div class="question-description">
           This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
         </div>
-        <div class="input-group mb-3">
+        <div class="input-group mb-3 upload-file-container">
           <div class="input-group-prepend">
             <span class="input-group-text">Upload</span>
           </div>
@@ -84,8 +84,6 @@
         </div>
         <img id='img-upload'/>
       </div>
-
-      <button type="submit" class="btn btn-success">Success</button>
 
       <div>
         <div v-if="errors.length === 0 && isSending" id="send-waiting">
@@ -99,6 +97,7 @@
           >{{ error }}</div>
         </div>
       </div>
+      <button type="submit" id="add-petition" class="btn btn-success">Add petition</button>
 
     </form>
 

@@ -14,17 +14,25 @@
 }
 
 .card-title{
-	  color:#0C115E;
+    color:#0C115E;
     font-weight: bold;
     font-size: 24px;
     line-height: 1.1;
-    text-align: left;
-    margin-left: 100px;
+    text-align: center;
 }
 
-
+.card-text-popup{
+    color:#0C115E;
+    font-size: 14px;
+    line-height: 1.1;
+    text-align: left;
+}
+.card-popup-btn {
+    margin-top: 10px;
+    margin-left: 10px;
+}
 .card-text{
-	  color:#0C115E;
+    color:#0C115E;
     font-size: 14px;
     line-height: 1.1;
     text-align: left;

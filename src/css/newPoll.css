@@ -6,7 +6,7 @@
 .big-title{
     color:#0C115E;
     font-weight: bold;
-    font-size: 30px;
+    font-size: 35px;
     line-height: 1.1;
 }
 .bloc-title{
@@ -20,8 +20,8 @@
     font-weight: bold;
     font-size: 30px;
     line-height: 1.1;
-    text-align: left;
-    margin-left: 200px;
+    text-align: center;
+    margin: 0 auto;
 }
 
 .question-description{
@@ -29,16 +29,14 @@
     font-size: 16px;
     font-weight: normal;
     line-height: 1.1;
-    text-align: left;
-    margin-left: 200px;
-    margin-top: 10px;
-    width: 600px;
+    text-align: center;
+    margin: 0 auto;
+    width: 50%;
 }
 
 .form-control{
-    max-width: 600px;
-    margin-left: 200px;
-    margin-top: 20px;
+    width: 50%!important;
+    margin: 20px auto;
     height: 50px;
     border-radius: 25px;
 }
@@ -52,8 +50,9 @@
     margin-left: 200px;
 }
 
-.custom-file label{
-    width: 400px;
+.upload-file-container{
+    margin: 20px auto;
+    width: 40%!important;
 }
 
 
@@ -64,8 +63,13 @@
     display: inline-block;
     width: 60px;
     height: 34px;
+    margin-top: 20px;
 }
 
+#add-petition{
+    margin-bottom: 20px;
+    background-color: #24E0B8;
+}
 /* Hide default HTML checkbox */
 .switch input {display:none;}
 

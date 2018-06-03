@@ -16,8 +16,7 @@
       >
         <div class="card-body">
           <h5 class="card-title">{{poll.title}}</h5>
-          <div>Contributors: {{poll.contributors}}</div>
-          <div>target: {{poll.target}}</div>
+          <div>Contributors: {{poll.contributors}} - target: {{poll.target}}</div>
           <p class="card-text">{{poll.query}}</p>
           <button class="btn btn-primary" type="button" @click="onVote(poll.title)">I sign</button>
         </div>
@@ -128,8 +127,8 @@
       :hideFooter="true"
     >
       <div>do you want sponsored ?</div>
-      <button class="btn btn-primary" type="button" @click="onSponsored()">Yes</button>
-      <button class="btn btn-primary" type="button" @click="validateVote()">No</button>
+      <button class="btn btn-primary card-popup-btn" type="button" @click="onSponsored()">Yes</button>
+      <button class="btn btn-primary card-popup-btn" type="button" @click="validateVote()">No</button>
     </b-modal>
     <b-modal
       :visible="showSponsoring"
@@ -139,15 +138,15 @@
       :noCloseOnEsc="true"
       :hideFooter="true"
     >
-      <div class="card-popup-sponsored">(content sponsored for free usage)</div>
+      <div class="card-popup-sponsored">(Content sponsored for free usage)</div>
       <div v-if="pollsSponsoring.length > 0" class="card-popup card w-75">
         <div class="card-body">
           <h5 class="card-title">{{pollsSponsoring[0].title}}</h5>
-          <p class="card-text">{{pollsSponsoring[0].query}}</p>
+          <p class="card-text-popup">{{pollsSponsoring[0].query}}</p>
         </div>
       </div>
-      <button class="btn btn-primary" type="button" @click="onVoteSponsored(pollsSponsoring[0].title, false)">Yes</button>
-      <button class="btn btn-primary" type="button" @click="onVoteSponsored(pollsSponsoring[0].title, true)">No</button>
+      <button class="btn card-popup-btn btn-primary" type="button" @click="onVoteSponsored(pollsSponsoring[0].title, false)">Yes</button>
+      <button class="btn card-popup-btn btn-primary" type="button" @click="onVoteSponsored(pollsSponsoring[0].title, true)">No</button>
     </b-modal>
   </div>
 </template>
