@@ -1,0 +1,18 @@
+.btn-navbar {
+    color: white;
+    padding: 10px 37px;
+    border-radius: 64px;
+    font-weight: bold;
+    background: #00E9BC;
+    transition: background 0.3s ease;
+    margin-right: 62px;
+    margin-top: 13px;
+    height: 40px;
+    width: 192px;
+}
+.btn-navbar:hover {
+    opacity: 1;
+    background: #3ac162;
+    text-decoration: none;
+    color: white;
+}

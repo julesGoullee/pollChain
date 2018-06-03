@@ -1,27 +1,27 @@
 <template>
-  <div id="home">
-    <Header></Header>
+  <div id="add">
+    <Header />
     <NodeConnect v-if="!nodeConnected" />
-    <Poll v-if="nodeConnected" />
+    <NewPoll v-if="nodeConnected" />
   </div>
 </template>
 
 <script>
 
   import { mapGetters } from 'vuex';
-  import Poll from '@/components/Poll.vue';
+  import NewPoll from '@/components/NewPoll.vue';
   import NodeConnect from '@/components/NodeConnect.vue';
   import Header from '@/components/Header.vue';
 
   export default {
-    name: 'home',
+    name: 'Add',
     computed: {
-      ...mapGetters(['nodeConnected', 'pollChain'])
+      ...mapGetters(['nodeConnected'])
     },
     components: {
       Header,
-      Poll,
-      NodeConnect,
+      NewPoll,
+      NodeConnect
     }
   };
 </script>
