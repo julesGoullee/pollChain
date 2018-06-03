@@ -80,12 +80,14 @@
         <div class="question-description">
           This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
         </div>
-        <div class="input-group">
-            <span class="input-group-btn">
-                <span class="btn btn-default btn-file">
-                    <input type="file" id="imgInp">
-                </span>
-            </span>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Upload</span>
+          </div>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="inputGroupFile01">
+            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+          </div>
         </div>
         <img id='img-upload'/>
       </div>

@@ -51,3 +51,7 @@
 .input-group{
     margin-left: 200px;
 }
+
+.custom-file label{
+    width: 400px;
+}
