@@ -50,3 +50,11 @@
 
 
 }
+
+.card-popup {
+	margin: 20px auto!important;
+}
+
+.card-popup-sponsored {
+	font-size: 26px;
+}

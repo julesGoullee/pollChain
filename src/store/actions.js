@@ -62,19 +62,11 @@ const actions = {
     await dispatch('getPolls');
 
   },
-  vote: async ({ state, commit, dispatch }, { title, querySponsored, voteRejected}) => {
+  vote: async ({ state, commit, dispatch }, { title, titleSponsored = '', voteRejected = false }) => {
     Errors.assert(storePollChain.data, 'pollChain_undefined');
-    if(querySponsored){
 
-      const res = await storePollChain.data.contract.vote['string,string,bool'](title, querySponsored, voteRejected, { from: state.address });
-      await Utils.getTransactionReceiptMined(res.tx);
-
-    } else {
-
-      const res = await storePollChain.data.vote(title, { from: state.address });
-      await Utils.getTransactionReceiptMined(res.tx);
-
-    }
+    const res = await storePollChain.data.vote(title, titleSponsored, voteRejected, { from: state.address });
+    await Utils.getTransactionReceiptMined(res.tx);
 
     await dispatch('getPolls');
   }

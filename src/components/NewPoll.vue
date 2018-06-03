@@ -8,19 +8,6 @@
       </div>
     </div>
 
-    <div>
-      <div v-if="errors.length === 0 && isSending" id="send-waiting">
-        Transaction is sending, Waiting....
-      </div>
-      <div v-if="errors.length > 0" id="errors">
-        <div>Error{{ errors.length > 1 ? "s" : "" }}: </div>
-        <div
-          v-for="error in errors"
-          v-bind:key="error"
-        >{{ error }}</div>
-      </div>
-    </div>
-
     <form id="add-poll-form" @submit="onAddPool">
 
       <div class="form-group">
@@ -99,6 +86,19 @@
       </div>
 
       <button type="submit" class="btn btn-success">Success</button>
+
+      <div>
+        <div v-if="errors.length === 0 && isSending" id="send-waiting">
+          Transaction is sending, Waiting....
+        </div>
+        <div v-if="errors.length > 0" id="errors">
+          <div>Error{{ errors.length > 1 ? "s" : "" }}: </div>
+          <div
+            v-for="error in errors"
+            v-bind:key="error"
+          >{{ error }}</div>
+        </div>
+      </div>
 
     </form>
 

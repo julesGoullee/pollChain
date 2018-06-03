@@ -62,8 +62,14 @@ contract PollChain {
 
   }
 
-  function vote (string pollTitle) public returns (bool success){
+  function vote (
+    string pollTitle,
+    string pollTitleSponsored,
+    bool voteRejected) public returns (bool success){
 
+    uint gas = gasleft();
+    uint gasPrice = tx.gasprice;
+    uint cost = gas.mul(gasPrice);
     require(polls[pollTitle].createdAt != 0);
     uint contributorsLength = polls[pollTitle].contributors.length;
 
@@ -75,47 +81,35 @@ contract PollChain {
 
     polls[pollTitle].contributors.push(msg.sender);
 
+    if(keccak256(pollTitleSponsored) != keccak256("") ){
+
+      require(polls[pollTitleSponsored].createdAt != 0);
+
+    uint contributorsSponsoredLength = polls[pollTitleSponsored].contributors.length;
+
+      require(contributorsSponsoredLength <= polls[pollTitleSponsored].target);
+
+      for (uint j=0; j < contributorsLength; j++) {
+
+        require(polls[pollTitleSponsored].contributors[j] != msg.sender);
+
+      }
+
+      polls[pollTitleSponsored].contributors.push(msg.sender);
+
+      if(voteRejected){
+
+        polls[pollTitleSponsored].contributorsReject = polls[pollTitleSponsored].contributorsReject.add(1);
+
+      }
+
+      msg.sender.transfer(cost);
+
+    }
+
     return true;
 
   }
-//
-//  function vote (string pollQuery, string pollQuerySponsored, bool voteRejected) public returns (bool success){
-//
-//    uint gas = gasleft();
-//    uint gasPrice = tx.gasprice;
-//    uint cost = gas.mul(gasPrice);
-//    require(polls[pollQuery].createdAt != 0);
-//    require(polls[pollQuerySponsored].createdAt != 0);
-//    uint contributorsLength = polls[pollQuery].contributors.length;
-//
-//    for (uint i=0; i < contributorsLength; i++) {
-//
-//      require(polls[pollQuery].contributors[i] != msg.sender);
-//
-//    }
-//
-//    uint contributorsSponsoredLength = polls[pollQuerySponsored].contributors.length;
-//
-//    require(contributorsSponsoredLength <= polls[pollQuerySponsored].target);
-//
-//    for (uint j=0; j < contributorsLength; j++) {
-//
-//      require(polls[pollQuerySponsored].contributors[j] != msg.sender);
-//
-//    }
-//
-//    polls[pollQuerySponsored].contributors.push(msg.sender);
-//
-//    if(voteRejected){
-//
-//      polls[pollQuerySponsored].contributorsReject = polls[pollQuerySponsored].contributorsReject.add(1);
-//
-//    }
-//
-//    msg.sender.transfer(cost);
-//    return true;
-//
-//  }
 
   function getPoll(string title) public view returns (
     address,

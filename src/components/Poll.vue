@@ -19,7 +19,7 @@
           <div>Contributors: {{poll.contributors}}</div>
           <div>target: {{poll.target}}</div>
           <p class="card-text">{{poll.query}}</p>
-          <button class="btn btn-primary" type="button" @click="validateVote(poll.title)">I sign</button>
+          <button class="btn btn-primary" type="button" @click="onVote(poll.title)">I sign</button>
         </div>
       </div>
 
@@ -119,30 +119,36 @@
         v-bind:key="error"
       >{{ error }}</div>
     </div>
-    <!--<b-modal-->
-      <!--:visible="showAskSponsoring"-->
-      <!--:centered="true"-->
-      <!--:hideHeaderClose="true"-->
-      <!--:noCloseOnBackdrop="true"-->
-      <!--:noCloseOnEsc="true"-->
-      <!--:hideFooter="true"-->
-    <!--&gt;-->
-      <!--<div>do you want sponsored ?</div>-->
-      <!--<button class="btn btn-primary" type="button" @click="onSponsored()">Yes</button>-->
-      <!--<button class="btn btn-primary" type="button" @click="validateVote()">No</button>-->
-    <!--</b-modal>-->
-    <!--<b-modal-->
-    <!--:visible="showSponsoring"-->
-    <!--:centered="true"-->
-    <!--:hideHeaderClose="true"-->
-    <!--:noCloseOnBackdrop="true"-->
-    <!--:noCloseOnEsc="true"-->
-    <!--:hideFooter="true"-->
-    <!--&gt;-->
-    <!--<div>It's true ?</div>-->
-    <!--<button class="btn btn-primary" type="button" @click="onSponsored()">Yes</button>-->
-    <!--<button class="btn btn-primary" type="button" @click="validateVote()">No</button>-->
-    <!--</b-modal>-->
+    <b-modal
+      :visible="showAskSponsoring"
+      :centered="true"
+      :hideHeaderClose="true"
+      :noCloseOnBackdrop="true"
+      :noCloseOnEsc="true"
+      :hideFooter="true"
+    >
+      <div>do you want sponsored ?</div>
+      <button class="btn btn-primary" type="button" @click="onSponsored()">Yes</button>
+      <button class="btn btn-primary" type="button" @click="validateVote()">No</button>
+    </b-modal>
+    <b-modal
+      :visible="showSponsoring"
+      :centered="true"
+      :hideHeaderClose="true"
+      :noCloseOnBackdrop="true"
+      :noCloseOnEsc="true"
+      :hideFooter="true"
+    >
+      <div class="card-popup-sponsored">(content sponsored for free usage)</div>
+      <div v-if="pollsSponsoring.length > 0" class="card-popup card w-75">
+        <div class="card-body">
+          <h5 class="card-title">{{pollsSponsoring[0].title}}</h5>
+          <p class="card-text">{{pollsSponsoring[0].query}}</p>
+        </div>
+      </div>
+      <button class="btn btn-primary" type="button" @click="onVoteSponsored(pollsSponsoring[0].title, false)">Yes</button>
+      <button class="btn btn-primary" type="button" @click="onVoteSponsored(pollsSponsoring[0].title, true)">No</button>
+    </b-modal>
   </div>
 </template>
 
@@ -168,13 +174,18 @@
       };
     },
     computed: {
-      ...mapGetters(['pollsFree', 'pollsSponsored'])
+      ...mapGetters(['pollsFree', 'pollsSponsoring'])
     },
     methods: {
       ...mapActions([ 'vote']),
       onVote(title){
         this.title = title;
-        this.showAskSponsoring = true;
+
+        if(this.pollsSponsoring.length > 0) {
+          this.showAskSponsoring = true;
+        } else {
+          this.validateVote();
+        }
       },
       onVoteSponsored(titleSponsored, voteRejected){
         this.titleSponsored = titleSponsored;
@@ -185,12 +196,15 @@
         this.showAskSponsoring = false;
         this.showSponsoring = true;
       },
-      validateVote(title){
+      validateVote(){
         this.errors = [];
         this.isSending = true;
         this.showAskSponsoring = false;
+        this.showSponsoring = false;
         this.vote({
-          title: title
+          title: this.title,
+          titleSponsored: this.titleSponsored,
+          voteRejected: this.voteRejected
         }).then(() => {
           this.isSending = false;
         })
