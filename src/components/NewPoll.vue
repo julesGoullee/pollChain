@@ -1,6 +1,22 @@
 <template>
   <div>
     <div>
+      <div class="bloc-title">
+        <div id="small-title">MY PETITION</div>
+        <div id="big-title">My petition to start <br>
+          to change the world</div>
+      </div>
+      <div class="question">
+        <div class="question-title">Insert the title of your petition</div>
+        <div class="question-description">
+          This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.</div>
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlInput1">Email address</label>
+        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Save the panda in Chongqing">
+      </div>
+    </div>
+    <div>
       <div>New poll:</div>
       <form id="add-poll-form" @submit="onAddPool">
         <input
@@ -40,7 +56,7 @@
   import config from '@/../config'
   import Errors from '@/utils/errors';
   import Decimal from 'decimal.js';
-  import '@/css/add.css';
+  import '@/css/newPoll.css';
 
   export default {
     name: 'NewPoll',
