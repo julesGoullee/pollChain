@@ -34,31 +34,43 @@
         <div class="card">
 
           <div class="card-body" id="designcard">
-            <h5 class="card-title">Fight for Women</h5>
+            <h5 class="card-title">Rohingya massacre : <br>UN must intervene</h5>
             <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
           </div>
           <div class="card-footer">
-            <a href="#" class="btn btn-primary">I sign</a>
+            <div class="signed-num">300 000 signed. <br>
+              Go to 300 000 petitors</div>
+            <div class="progress">
+              <div class="progress-bar bg-warning" role="progressbar" style="width: 100%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
           </div>
         </div>
         <div class="card">
 
           <div class="card-body">
-            <h5 class="card-title">Fight for Ban Hyung</h5>
+            <h5 class="card-title">Opening our hearts to refugees</h5>
             <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
           </div>
           <div class="card-footer">
-            <a href="#" class="btn btn-primary">I sign</a>
+            <div class="signed-num">300 000 signed. <br>
+              Go to 300 000 petitors</div>
+            <div class="progress">
+              <div class="progress-bar bg-warning" role="progressbar" style="width: 100%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
           </div>
         </div>
         <div class="card">
 
           <div class="card-body">
-            <h5 class="card-title">Expression Liberty</h5>
+            <h5 class="card-title">Protecting forests, the lungs of our planet</h5>
             <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
           </div>
           <div class="card-footer">
-            <a href="#" class="btn btn-primary">I sign</a>
+            <div class="signed-num">300 000 signed. <br>
+              Go to 300 000 petitors</div>
+            <div class="progress">
+              <div class="progress-bar bg-warning" role="progressbar" style="width: 100%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
           </div>
         </div>
       </div>
