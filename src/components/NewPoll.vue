@@ -71,7 +71,13 @@
         <div class="question-description">
           This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
         </div>
-        <input type="checkbox" id="isSponsoring" v-model="isSponsoring">
+        <label class="switch">
+          <input
+            type="checkbox"
+            id="isSponsoring" v-model="isSponsoring"
+          >
+          <span class="slider round"></span>
+        </label>
         <div v-if="isSponsoring">Cost: {{ calcCost() }} ether</div>
       </div>
 
