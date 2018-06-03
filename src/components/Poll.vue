@@ -3,11 +3,11 @@
     <div>
       <div>Polls:</div>
       <div
-        v-for="poll in polls"
+        v-for="poll in pollsFree"
         v-bind:key="JSON.stringify(poll)"
       >
         <div>{{ poll }}</div>
-        <button type="button" @click="onVote(poll.query)">Vote!</button>
+        <button class="btn btn-primary kikou" type="button" @click="onVote(poll.query)">Vote!</button>
       </div>
     </div>
     <div>
@@ -26,6 +26,9 @@
           v-model.trim="target"
           placeholder="Target contributor"
         >
+        <label for="isSponsoring">is sponsoring</label>
+        <input type="checkbox" id="isSponsoring" v-model="isSponsoring">
+        <div v-if="isSponsoring">Cost: {{ calcCost() }} ether</div>
         <input id="add-poll-submit" type="submit" value="Validate">
       </form>
     </div>
@@ -45,6 +48,8 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
   import Errors from '@/utils/errors';
+  import Decimal from 'decimal.js';
+  import '@/css/test.css';
 
   export default {
     name: 'Poll',
@@ -52,12 +57,13 @@
       return {
         query: '',
         target: 100,
+        isSponsoring: false,
         errors: [],
         isSending: false
       };
     },
     computed: {
-      ...mapGetters(['polls'])
+      ...mapGetters(['pollsFree'])
     },
     methods: {
       ...mapActions(['addPoll', 'vote']),
@@ -67,7 +73,8 @@
 
         this.addPoll({
           query: this.query,
-          target: this.target
+          target: this.target,
+          isSponsoring: this.isSponsoring
         })
           .then(() => {
             this.query = '';
@@ -92,6 +99,9 @@
             this.errors.push(Errors.displayError(error));
             this.isSending = false;
           });
+      },
+      calcCost(){
+        return new Decimal(this.target).mul(0.1).toString();
       }
     },
 

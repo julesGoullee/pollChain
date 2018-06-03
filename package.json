@@ -13,6 +13,8 @@
     "@vue/eslint-config-standard": "^3.0.0-beta.11",
     "@vue/test-utils": "^1.0.0-beta.16",
     "babel-register": "^6.26.0",
+    "bootstrap-vue": "^2.0.0-rc.11",
+    "decimal.js": "^10.0.1",
     "dotenv": "^6.0.0",
     "eslint": "^4.19.1",
     "ethereumjs-testrpc": "^6.0.3",

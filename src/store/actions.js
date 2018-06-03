@@ -40,11 +40,13 @@ const actions = {
     commit('polls', { polls });
 
   },
-  addPoll: async ({ state, commit, dispatch }, { query, target }) => {
+  addPoll: async ({ state, commit, dispatch }, { query, target, isSponsoring }) => {
     Errors.assert(storePollChain.data, 'pollChain_undefined');
-    const res = await storePollChain.data.addPoll(query, target, { from: state.address });
+
+    const res = await storePollChain.data.addPoll(query, target, isSponsoring, { from: state.address });
     await Utils.getTransactionReceiptMined(res.tx);
     await dispatch('getPolls');
+
   },
   vote: async ({ state, commit, dispatch }, { query }) => {
     Errors.assert(storePollChain.data, 'pollChain_undefined');

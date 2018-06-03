@@ -23,10 +23,12 @@ contract PollChain {
   mapping(string => Types.Poll) internal polls;
   string[] public pollsIndex;
   uint public pollsCount;
+  uint public costPeerVote;
 
   constructor () public {
 
     pollsCount = 0;
+    costPeerVote = 100000000000000000; // 0.1 ether
 
   }
 
@@ -34,24 +36,23 @@ contract PollChain {
     revert();
   }
 
-  function addPoll (string query, uint target) public returns (bool success){
+  function addPoll (string query, uint target, bool isSponsoring) public payable returns (bool success){
     polls[query].creator = msg.sender;
     polls[query].createdAt = block.timestamp;
     polls[query].query = query;
     polls[query].target = target;
-    polls[query].kind = "free";
-    pollsIndex.push(query);
-    pollsCount = pollsCount.add(1);
-    return true;
 
-  }
+    if(isSponsoring){
 
-  function addPollSponsor (string query, uint target) public payable returns (bool success){
-    polls[query].creator = msg.sender;
-    polls[query].createdAt = block.timestamp;
-    polls[query].query = query;
-    polls[query].target = target;
-    polls[query].kind = "sp";
+      require(msg.value == costPeerVote.mul(target));
+      polls[query].kind = "sponsoring";
+
+    } else {
+
+      polls[query].kind = "free";
+
+    }
+
     pollsIndex.push(query);
     pollsCount = pollsCount.add(1);
     return true;

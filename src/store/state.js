@@ -1,7 +1,8 @@
 const state = {
   nodeConnected: false,
   pollChain: null,
-  polls: [],
+  pollsFree: [],
+  pollsSponsoring: [],
   address: null
 };
 
