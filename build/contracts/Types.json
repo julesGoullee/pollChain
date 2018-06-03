@@ -1,11 +1,11 @@
 {
   "contractName": "Types",
   "abi": [],
-  "bytecode": "0x605a602c600b82828239805160001a60731460008114601c57601e565bfe5b5030600052607381538281f30073000000000000000000000000000000000000000030146080604052600080fd00a265627a7a7230582075c1e88169cfc4d44f1bed2dde164b5be78a68680f313eef0c6253d04ec7371f6c6578706572696d656e74616cf50037",
-  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fd00a265627a7a7230582075c1e88169cfc4d44f1bed2dde164b5be78a68680f313eef0c6253d04ec7371f6c6578706572696d656e74616cf50037",
+  "bytecode": "0x605a602c600b82828239805160001a60731460008114601c57601e565bfe5b5030600052607381538281f30073000000000000000000000000000000000000000030146080604052600080fd00a265627a7a72305820d1737b65443631d152502e4297ab096acda806cf9a8556f19e8fba1875f2078d6c6578706572696d656e74616cf50037",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fd00a265627a7a72305820d1737b65443631d152502e4297ab096acda806cf9a8556f19e8fba1875f2078d6c6578706572696d656e74616cf50037",
   "sourceMap": "117:207:0:-;;132:2:-1;166:7;155:9;146:7;137:37;252:7;246:14;243:1;238:23;232:4;229:33;270:1;265:20;;;;222:63;;265:20;274:9;222:63;;298:9;295:1;288:20;328:4;319:7;311:22;352:7;343;336:24",
   "deployedSourceMap": "117:207:0:-;;;;;;;;",
-  "source": "pragma solidity ^0.4.23;\npragma experimental ABIEncoderV2;\n\nimport \"zeppelin-solidity/contracts/math/SafeMath.sol\";\n\nlibrary Types {\n\n  struct Poll {\n    address creator;\n    string title;\n    string query;\n    uint createdAt;\n    string kind;\n    uint target;\n    address[] contributors;\n    uint contributorsReject;\n  }\n\n}\n\ncontract PollChain {\n\n  using SafeMath for uint;\n\n  mapping(string => Types.Poll) internal polls;\n  string[] public pollsIndex;\n  uint public pollsCount;\n  uint public costPeerVote;\n\n  constructor () public {\n\n    pollsCount = 0;\n    costPeerVote = 100000000000000000; // 0.1 ether\n\n  }\n\n  function () external payable {\n    revert();\n  }\n\n  function addPoll (string query, string title, uint target, bool isSponsoring) public payable returns (bool success){\n    polls[title].creator = msg.sender;\n    polls[title].createdAt = block.timestamp;\n    polls[title].title = title;\n    polls[title].query = query;\n    polls[title].target = target;\n\n    if(isSponsoring){\n\n      require(msg.value == costPeerVote.mul(target));\n      polls[title].kind = \"sponsoring\";\n\n    } else {\n\n      polls[title].kind = \"free\";\n\n    }\n\n    pollsIndex.push(title);\n    pollsCount = pollsCount.add(1);\n    return true;\n\n  }\n\n  function vote (\n    string pollTitle,\n    string pollTitleSponsored,\n    bool voteRejected) public returns (bool success){\n\n    uint gas = gasleft();\n    uint gasPrice = tx.gasprice;\n    uint cost = gas.mul(gasPrice);\n    require(polls[pollTitle].createdAt != 0);\n    uint contributorsLength = polls[pollTitle].contributors.length;\n\n    for (uint i=0; i < contributorsLength; i++) {\n\n      require(polls[pollTitle].contributors[i] != msg.sender);\n\n    }\n\n    polls[pollTitle].contributors.push(msg.sender);\n\n    if(keccak256(pollTitleSponsored) != keccak256(\"\") ){\n\n      require(polls[pollTitleSponsored].createdAt != 0);\n\n    uint contributorsSponsoredLength = polls[pollTitleSponsored].contributors.length;\n\n      require(contributorsSponsoredLength <= polls[pollTitleSponsored].target);\n\n      for (uint j=0; j < contributorsLength; j++) {\n\n        require(polls[pollTitleSponsored].contributors[j] != msg.sender);\n\n      }\n\n      polls[pollTitleSponsored].contributors.push(msg.sender);\n\n      if(voteRejected){\n\n        polls[pollTitleSponsored].contributorsReject = polls[pollTitleSponsored].contributorsReject.add(1);\n\n      }\n\n      msg.sender.transfer(cost);\n\n    }\n\n    return true;\n\n  }\n\n  function getPoll(string title) public view returns (\n    address,\n    string,\n    string,\n    uint,\n    string,\n    uint,\n    uint\n  ){\n\n    return (\n      polls[title].creator,\n      polls[title].title,\n      polls[title].query,\n      polls[title].createdAt,\n      polls[title].kind,\n      polls[title].target,\n      polls[title].contributors.length\n    );\n\n  }\n\n}\n",
+  "source": "pragma solidity ^0.4.23;\npragma experimental ABIEncoderV2;\n\nimport \"zeppelin-solidity/contracts/math/SafeMath.sol\";\n\nlibrary Types {\n\n  struct Poll {\n    address creator;\n    string title;\n    string query;\n    uint createdAt;\n    string kind;\n    uint target;\n    address[] contributors;\n    uint contributorsReject;\n  }\n\n}\n\ncontract PollChain {\n\n  using SafeMath for uint;\n\n  mapping(string => Types.Poll) internal polls;\n  string[] public pollsIndex;\n  uint public pollsCount;\n  uint public costPeerVote;\n\n  constructor () public {\n\n    pollsCount = 0;\n    costPeerVote = 100000000000000000; // 0.1 ether\n\n  }\n\n  function () external payable {\n    revert();\n  }\n\n  function addPoll (string query, string title, uint target, bool isSponsoring) public payable returns (bool success){\n    polls[title].creator = msg.sender;\n    polls[title].createdAt = block.timestamp;\n    polls[title].title = title;\n    polls[title].query = query;\n    polls[title].target = target;\n\n    if(isSponsoring){\n\n      require(msg.value == costPeerVote.mul(target));\n      polls[title].kind = \"sponsoring\";\n\n    } else {\n\n      polls[title].kind = \"free\";\n\n    }\n\n    pollsIndex.push(title);\n    pollsCount = pollsCount.add(1);\n    return true;\n\n  }\n\n  function vote (\n    string pollTitle,\n    string pollTitleSponsored,\n    bool voteRejected) public returns (bool success){\n\n    uint gas = gasleft();\n    uint gasPrice = tx.gasprice;\n    uint cost = gas.mul(gasPrice);\n    require(polls[pollTitle].createdAt != 0);\n    uint contributorsLength = polls[pollTitle].contributors.length;\n\n    for (uint i=0; i < contributorsLength; i++) {\n\n      require(polls[pollTitle].contributors[i] != msg.sender);\n\n    }\n\n    polls[pollTitle].contributors.push(msg.sender);\n\n    if(keccak256(pollTitleSponsored) != keccak256(\"\") ){\n\n      require(polls[pollTitleSponsored].createdAt != 0);\n\n      uint contributorsSponsoredLength = polls[pollTitleSponsored].contributors.length;\n\n      require(contributorsSponsoredLength <= polls[pollTitleSponsored].target);\n\n      for (uint j=0; j < contributorsLength; j++) {\n\n        require(polls[pollTitleSponsored].contributors[j] != msg.sender);\n\n      }\n\n      polls[pollTitleSponsored].contributors.push(msg.sender);\n\n      if(voteRejected){\n\n        polls[pollTitleSponsored].contributorsReject = polls[pollTitleSponsored].contributorsReject.add(1);\n\n      }\n\n      msg.sender.transfer(cost);\n\n    }\n\n    return true;\n\n  }\n\n  function getPoll(string title) public view returns (\n    address,\n    string,\n    string,\n    uint,\n    string,\n    uint,\n    uint\n  ){\n\n    return (\n    polls[title].creator,\n    polls[title].title,\n    polls[title].query,\n    polls[title].createdAt,\n    polls[title].kind,\n    polls[title].target,\n    polls[title].contributors.length\n    );\n\n  }\n\n}\n",
   "sourcePath": "/Users/jules/WebstormProjects/pollchain/contracts/PollChain.sol",
   "ast": {
     "absolutePath": "/Users/jules/WebstormProjects/pollchain/contracts/PollChain.sol",
@@ -1904,7 +1904,7 @@
             "body": {
               "id": 321,
               "nodeType": "Block",
-              "src": "1353:1077:0",
+              "src": "1353:1079:0",
               "statements": [
                 {
                   "assignments": [
@@ -2958,11 +2958,11 @@
                   "falseBody": null,
                   "id": 318,
                   "nodeType": "IfStatement",
-                  "src": "1744:663:0",
+                  "src": "1744:665:0",
                   "trueBody": {
                     "id": 317,
                     "nodeType": "Block",
-                    "src": "1795:612:0",
+                    "src": "1795:614:0",
                     "statements": [
                       {
                         "expression": {
@@ -3112,7 +3112,7 @@
                             "name": "contributorsSponsoredLength",
                             "nodeType": "VariableDeclaration",
                             "scope": 322,
-                            "src": "1860:32:0",
+                            "src": "1862:32:0",
                             "stateVariable": false,
                             "storageLocation": "default",
                             "typeDescriptions": {
@@ -3123,7 +3123,7 @@
                               "id": 243,
                               "name": "uint",
                               "nodeType": "ElementaryTypeName",
-                              "src": "1860:4:0",
+                              "src": "1862:4:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
@@ -3147,7 +3147,7 @@
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
                                 "referencedDeclaration": 29,
-                                "src": "1895:5:0",
+                                "src": "1897:5:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                   "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -3161,7 +3161,7 @@
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
                                 "referencedDeclaration": 153,
-                                "src": "1901:18:0",
+                                "src": "1903:18:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_string_memory_ptr",
                                   "typeString": "string memory"
@@ -3172,7 +3172,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "nodeType": "IndexAccess",
-                              "src": "1895:25:0",
+                              "src": "1897:25:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_struct$_Poll_$21_storage",
                                 "typeString": "struct Types.Poll storage ref"
@@ -3186,7 +3186,7 @@
                             "memberName": "contributors",
                             "nodeType": "MemberAccess",
                             "referencedDeclaration": 18,
-                            "src": "1895:38:0",
+                            "src": "1897:38:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_array$_t_address_$dyn_storage",
                               "typeString": "address[] storage ref"
@@ -3200,14 +3200,14 @@
                           "memberName": "length",
                           "nodeType": "MemberAccess",
                           "referencedDeclaration": null,
-                          "src": "1895:45:0",
+                          "src": "1897:45:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
                           }
                         },
                         "nodeType": "VariableDeclarationStatement",
-                        "src": "1860:80:0"
+                        "src": "1862:80:0"
                       },
                       {
                         "expression": {
@@ -3231,7 +3231,7 @@
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
                                 "referencedDeclaration": 244,
-                                "src": "1957:27:0",
+                                "src": "1959:27:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
                                   "typeString": "uint256"
@@ -3250,7 +3250,7 @@
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
                                     "referencedDeclaration": 29,
-                                    "src": "1988:5:0",
+                                    "src": "1990:5:0",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                       "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -3264,7 +3264,7 @@
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
                                     "referencedDeclaration": 153,
-                                    "src": "1994:18:0",
+                                    "src": "1996:18:0",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_string_memory_ptr",
                                       "typeString": "string memory"
@@ -3275,7 +3275,7 @@
                                   "isPure": false,
                                   "lValueRequested": false,
                                   "nodeType": "IndexAccess",
-                                  "src": "1988:25:0",
+                                  "src": "1990:25:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_struct$_Poll_$21_storage",
                                     "typeString": "struct Types.Poll storage ref"
@@ -3289,13 +3289,13 @@
                                 "memberName": "target",
                                 "nodeType": "MemberAccess",
                                 "referencedDeclaration": 15,
-                                "src": "1988:32:0",
+                                "src": "1990:32:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
                                   "typeString": "uint256"
                                 }
                               },
-                              "src": "1957:63:0",
+                              "src": "1959:63:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_bool",
                                 "typeString": "bool"
@@ -3317,7 +3317,7 @@
                               487
                             ],
                             "referencedDeclaration": 486,
-                            "src": "1949:7:0",
+                            "src": "1951:7:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
                               "typeString": "function (bool) pure"
@@ -3331,7 +3331,7 @@
                           "lValueRequested": false,
                           "names": [],
                           "nodeType": "FunctionCall",
-                          "src": "1949:72:0",
+                          "src": "1951:72:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_tuple$__$",
                             "typeString": "tuple()"
@@ -3339,13 +3339,13 @@
                         },
                         "id": 259,
                         "nodeType": "ExpressionStatement",
-                        "src": "1949:72:0"
+                        "src": "1951:72:0"
                       },
                       {
                         "body": {
                           "id": 282,
                           "nodeType": "Block",
-                          "src": "2074:85:0",
+                          "src": "2076:85:0",
                           "statements": [
                             {
                               "expression": {
@@ -3375,7 +3375,7 @@
                                             "nodeType": "Identifier",
                                             "overloadedDeclarations": [],
                                             "referencedDeclaration": 29,
-                                            "src": "2093:5:0",
+                                            "src": "2095:5:0",
                                             "typeDescriptions": {
                                               "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                               "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -3389,7 +3389,7 @@
                                             "nodeType": "Identifier",
                                             "overloadedDeclarations": [],
                                             "referencedDeclaration": 153,
-                                            "src": "2099:18:0",
+                                            "src": "2101:18:0",
                                             "typeDescriptions": {
                                               "typeIdentifier": "t_string_memory_ptr",
                                               "typeString": "string memory"
@@ -3400,7 +3400,7 @@
                                           "isPure": false,
                                           "lValueRequested": false,
                                           "nodeType": "IndexAccess",
-                                          "src": "2093:25:0",
+                                          "src": "2095:25:0",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_struct$_Poll_$21_storage",
                                             "typeString": "struct Types.Poll storage ref"
@@ -3414,7 +3414,7 @@
                                         "memberName": "contributors",
                                         "nodeType": "MemberAccess",
                                         "referencedDeclaration": 18,
-                                        "src": "2093:38:0",
+                                        "src": "2095:38:0",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_array$_t_address_$dyn_storage",
                                           "typeString": "address[] storage ref"
@@ -3428,7 +3428,7 @@
                                         "nodeType": "Identifier",
                                         "overloadedDeclarations": [],
                                         "referencedDeclaration": 261,
-                                        "src": "2132:1:0",
+                                        "src": "2134:1:0",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_uint256",
                                           "typeString": "uint256"
@@ -3439,7 +3439,7 @@
                                       "isPure": false,
                                       "lValueRequested": false,
                                       "nodeType": "IndexAccess",
-                                      "src": "2093:41:0",
+                                      "src": "2095:41:0",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_address",
                                         "typeString": "address"
@@ -3456,7 +3456,7 @@
                                         "nodeType": "Identifier",
                                         "overloadedDeclarations": [],
                                         "referencedDeclaration": 483,
-                                        "src": "2138:3:0",
+                                        "src": "2140:3:0",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_magic_message",
                                           "typeString": "msg"
@@ -3470,13 +3470,13 @@
                                       "memberName": "sender",
                                       "nodeType": "MemberAccess",
                                       "referencedDeclaration": null,
-                                      "src": "2138:10:0",
+                                      "src": "2140:10:0",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_address",
                                         "typeString": "address"
                                       }
                                     },
-                                    "src": "2093:55:0",
+                                    "src": "2095:55:0",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_bool",
                                       "typeString": "bool"
@@ -3498,7 +3498,7 @@
                                     487
                                   ],
                                   "referencedDeclaration": 486,
-                                  "src": "2085:7:0",
+                                  "src": "2087:7:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
                                     "typeString": "function (bool) pure"
@@ -3512,7 +3512,7 @@
                                 "lValueRequested": false,
                                 "names": [],
                                 "nodeType": "FunctionCall",
-                                "src": "2085:64:0",
+                                "src": "2087:64:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_tuple$__$",
                                   "typeString": "tuple()"
@@ -3520,7 +3520,7 @@
                               },
                               "id": 281,
                               "nodeType": "ExpressionStatement",
-                              "src": "2085:64:0"
+                              "src": "2087:64:0"
                             }
                           ]
                         },
@@ -3542,7 +3542,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 261,
-                            "src": "2045:1:0",
+                            "src": "2047:1:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
                               "typeString": "uint256"
@@ -3557,13 +3557,13 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 187,
-                            "src": "2049:18:0",
+                            "src": "2051:18:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
                               "typeString": "uint256"
                             }
                           },
-                          "src": "2045:22:0",
+                          "src": "2047:22:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bool",
                             "typeString": "bool"
@@ -3581,7 +3581,7 @@
                               "name": "j",
                               "nodeType": "VariableDeclaration",
                               "scope": 322,
-                              "src": "2035:6:0",
+                              "src": "2037:6:0",
                               "stateVariable": false,
                               "storageLocation": "default",
                               "typeDescriptions": {
@@ -3592,7 +3592,7 @@
                                 "id": 260,
                                 "name": "uint",
                                 "nodeType": "ElementaryTypeName",
-                                "src": "2035:4:0",
+                                "src": "2037:4:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
                                   "typeString": "uint256"
@@ -3613,7 +3613,7 @@
                             "kind": "number",
                             "lValueRequested": false,
                             "nodeType": "Literal",
-                            "src": "2042:1:0",
+                            "src": "2044:1:0",
                             "subdenomination": null,
                             "typeDescriptions": {
                               "typeIdentifier": "t_rational_0_by_1",
@@ -3622,7 +3622,7 @@
                             "value": "0"
                           },
                           "nodeType": "VariableDeclarationStatement",
-                          "src": "2035:8:0"
+                          "src": "2037:8:0"
                         },
                         "loopExpression": {
                           "expression": {
@@ -3635,7 +3635,7 @@
                             "nodeType": "UnaryOperation",
                             "operator": "++",
                             "prefix": false,
-                            "src": "2069:3:0",
+                            "src": "2071:3:0",
                             "subExpression": {
                               "argumentTypes": null,
                               "id": 267,
@@ -3643,7 +3643,7 @@
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
                               "referencedDeclaration": 261,
-                              "src": "2069:1:0",
+                              "src": "2071:1:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
@@ -3656,10 +3656,10 @@
                           },
                           "id": 269,
                           "nodeType": "ExpressionStatement",
-                          "src": "2069:3:0"
+                          "src": "2071:3:0"
                         },
                         "nodeType": "ForStatement",
-                        "src": "2030:129:0"
+                        "src": "2032:129:0"
                       },
                       {
                         "expression": {
@@ -3674,7 +3674,7 @@
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
                                 "referencedDeclaration": 483,
-                                "src": "2211:3:0",
+                                "src": "2213:3:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
                                   "typeString": "msg"
@@ -3688,7 +3688,7 @@
                               "memberName": "sender",
                               "nodeType": "MemberAccess",
                               "referencedDeclaration": null,
-                              "src": "2211:10:0",
+                              "src": "2213:10:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_address",
                                 "typeString": "address"
@@ -3713,7 +3713,7 @@
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
                                   "referencedDeclaration": 29,
-                                  "src": "2167:5:0",
+                                  "src": "2169:5:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                     "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -3727,7 +3727,7 @@
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
                                   "referencedDeclaration": 153,
-                                  "src": "2173:18:0",
+                                  "src": "2175:18:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_string_memory_ptr",
                                     "typeString": "string memory"
@@ -3738,7 +3738,7 @@
                                 "isPure": false,
                                 "lValueRequested": false,
                                 "nodeType": "IndexAccess",
-                                "src": "2167:25:0",
+                                "src": "2169:25:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_struct$_Poll_$21_storage",
                                   "typeString": "struct Types.Poll storage ref"
@@ -3752,7 +3752,7 @@
                               "memberName": "contributors",
                               "nodeType": "MemberAccess",
                               "referencedDeclaration": 18,
-                              "src": "2167:38:0",
+                              "src": "2169:38:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_array$_t_address_$dyn_storage",
                                 "typeString": "address[] storage ref"
@@ -3766,7 +3766,7 @@
                             "memberName": "push",
                             "nodeType": "MemberAccess",
                             "referencedDeclaration": null,
-                            "src": "2167:43:0",
+                            "src": "2169:43:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_arraypush_nonpayable$_t_address_$returns$_t_uint256_$",
                               "typeString": "function (address) returns (uint256)"
@@ -3780,7 +3780,7 @@
                           "lValueRequested": false,
                           "names": [],
                           "nodeType": "FunctionCall",
-                          "src": "2167:55:0",
+                          "src": "2169:55:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -3788,7 +3788,7 @@
                         },
                         "id": 292,
                         "nodeType": "ExpressionStatement",
-                        "src": "2167:55:0"
+                        "src": "2169:55:0"
                       },
                       {
                         "condition": {
@@ -3798,7 +3798,7 @@
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 155,
-                          "src": "2234:12:0",
+                          "src": "2236:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bool",
                             "typeString": "bool"
@@ -3807,11 +3807,11 @@
                         "falseBody": null,
                         "id": 308,
                         "nodeType": "IfStatement",
-                        "src": "2231:135:0",
+                        "src": "2233:135:0",
                         "trueBody": {
                           "id": 307,
                           "nodeType": "Block",
-                          "src": "2247:119:0",
+                          "src": "2249:119:0",
                           "statements": [
                             {
                               "expression": {
@@ -3832,7 +3832,7 @@
                                       "nodeType": "Identifier",
                                       "overloadedDeclarations": [],
                                       "referencedDeclaration": 29,
-                                      "src": "2258:5:0",
+                                      "src": "2260:5:0",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                         "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -3846,7 +3846,7 @@
                                       "nodeType": "Identifier",
                                       "overloadedDeclarations": [],
                                       "referencedDeclaration": 153,
-                                      "src": "2264:18:0",
+                                      "src": "2266:18:0",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_string_memory_ptr",
                                         "typeString": "string memory"
@@ -3857,7 +3857,7 @@
                                     "isPure": false,
                                     "lValueRequested": false,
                                     "nodeType": "IndexAccess",
-                                    "src": "2258:25:0",
+                                    "src": "2260:25:0",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_struct$_Poll_$21_storage",
                                       "typeString": "struct Types.Poll storage ref"
@@ -3871,7 +3871,7 @@
                                   "memberName": "contributorsReject",
                                   "nodeType": "MemberAccess",
                                   "referencedDeclaration": 20,
-                                  "src": "2258:44:0",
+                                  "src": "2260:44:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_uint256",
                                     "typeString": "uint256"
@@ -3892,7 +3892,7 @@
                                       "kind": "number",
                                       "lValueRequested": false,
                                       "nodeType": "Literal",
-                                      "src": "2354:1:0",
+                                      "src": "2356:1:0",
                                       "subdenomination": null,
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_rational_1_by_1",
@@ -3919,7 +3919,7 @@
                                           "nodeType": "Identifier",
                                           "overloadedDeclarations": [],
                                           "referencedDeclaration": 29,
-                                          "src": "2305:5:0",
+                                          "src": "2307:5:0",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                             "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -3933,7 +3933,7 @@
                                           "nodeType": "Identifier",
                                           "overloadedDeclarations": [],
                                           "referencedDeclaration": 153,
-                                          "src": "2311:18:0",
+                                          "src": "2313:18:0",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_string_memory_ptr",
                                             "typeString": "string memory"
@@ -3944,7 +3944,7 @@
                                         "isPure": false,
                                         "lValueRequested": false,
                                         "nodeType": "IndexAccess",
-                                        "src": "2305:25:0",
+                                        "src": "2307:25:0",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_struct$_Poll_$21_storage",
                                           "typeString": "struct Types.Poll storage ref"
@@ -3958,7 +3958,7 @@
                                       "memberName": "contributorsReject",
                                       "nodeType": "MemberAccess",
                                       "referencedDeclaration": 20,
-                                      "src": "2305:44:0",
+                                      "src": "2307:44:0",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_uint256",
                                         "typeString": "uint256"
@@ -3972,7 +3972,7 @@
                                     "memberName": "add",
                                     "nodeType": "MemberAccess",
                                     "referencedDeclaration": 467,
-                                    "src": "2305:48:0",
+                                    "src": "2307:48:0",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
                                       "typeString": "function (uint256,uint256) pure returns (uint256)"
@@ -3986,13 +3986,13 @@
                                   "lValueRequested": false,
                                   "names": [],
                                   "nodeType": "FunctionCall",
-                                  "src": "2305:51:0",
+                                  "src": "2307:51:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_uint256",
                                     "typeString": "uint256"
                                   }
                                 },
-                                "src": "2258:98:0",
+                                "src": "2260:98:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
                                   "typeString": "uint256"
@@ -4000,7 +4000,7 @@
                               },
                               "id": 306,
                               "nodeType": "ExpressionStatement",
-                              "src": "2258:98:0"
+                              "src": "2260:98:0"
                             }
                           ]
                         }
@@ -4016,7 +4016,7 @@
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
                               "referencedDeclaration": 171,
-                              "src": "2394:4:0",
+                              "src": "2396:4:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
@@ -4039,7 +4039,7 @@
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
                                 "referencedDeclaration": 483,
-                                "src": "2374:3:0",
+                                "src": "2376:3:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
                                   "typeString": "msg"
@@ -4053,7 +4053,7 @@
                               "memberName": "sender",
                               "nodeType": "MemberAccess",
                               "referencedDeclaration": null,
-                              "src": "2374:10:0",
+                              "src": "2376:10:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_address",
                                 "typeString": "address"
@@ -4067,7 +4067,7 @@
                             "memberName": "transfer",
                             "nodeType": "MemberAccess",
                             "referencedDeclaration": null,
-                            "src": "2374:19:0",
+                            "src": "2376:19:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_transfer_nonpayable$_t_uint256_$returns$__$",
                               "typeString": "function (uint256)"
@@ -4081,7 +4081,7 @@
                           "lValueRequested": false,
                           "names": [],
                           "nodeType": "FunctionCall",
-                          "src": "2374:25:0",
+                          "src": "2376:25:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_tuple$__$",
                             "typeString": "tuple()"
@@ -4089,7 +4089,7 @@
                         },
                         "id": 316,
                         "nodeType": "ExpressionStatement",
-                        "src": "2374:25:0"
+                        "src": "2376:25:0"
                       }
                     ]
                   }
@@ -4105,7 +4105,7 @@
                     "kind": "bool",
                     "lValueRequested": false,
                     "nodeType": "Literal",
-                    "src": "2420:4:0",
+                    "src": "2422:4:0",
                     "subdenomination": null,
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
@@ -4116,7 +4116,7 @@
                   "functionReturnParameters": 159,
                   "id": 320,
                   "nodeType": "Return",
-                  "src": "2413:11:0"
+                  "src": "2415:11:0"
                 }
               ]
             },
@@ -4248,7 +4248,7 @@
               "src": "1339:14:0"
             },
             "scope": 374,
-            "src": "1232:1198:0",
+            "src": "1232:1200:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
@@ -4257,7 +4257,7 @@
             "body": {
               "id": 372,
               "nodeType": "Block",
-              "src": "2568:228:0",
+              "src": "2570:214:0",
               "statements": [
                 {
                   "expression": {
@@ -4330,7 +4330,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 29,
-                            "src": "2618:5:0",
+                            "src": "2616:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                               "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -4344,7 +4344,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 324,
-                            "src": "2624:5:0",
+                            "src": "2622:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_string_memory_ptr",
                               "typeString": "string memory"
@@ -4355,7 +4355,7 @@
                           "isPure": false,
                           "lValueRequested": false,
                           "nodeType": "IndexAccess",
-                          "src": "2618:12:0",
+                          "src": "2616:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_struct$_Poll_$21_storage",
                             "typeString": "struct Types.Poll storage ref"
@@ -4369,7 +4369,7 @@
                         "memberName": "title",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": 7,
-                        "src": "2618:18:0",
+                        "src": "2616:18:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_string_storage",
                           "typeString": "string storage ref"
@@ -4386,7 +4386,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 29,
-                            "src": "2644:5:0",
+                            "src": "2640:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                               "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -4400,7 +4400,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 324,
-                            "src": "2650:5:0",
+                            "src": "2646:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_string_memory_ptr",
                               "typeString": "string memory"
@@ -4411,7 +4411,7 @@
                           "isPure": false,
                           "lValueRequested": false,
                           "nodeType": "IndexAccess",
-                          "src": "2644:12:0",
+                          "src": "2640:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_struct$_Poll_$21_storage",
                             "typeString": "struct Types.Poll storage ref"
@@ -4425,7 +4425,7 @@
                         "memberName": "query",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": 9,
-                        "src": "2644:18:0",
+                        "src": "2640:18:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_string_storage",
                           "typeString": "string storage ref"
@@ -4442,7 +4442,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 29,
-                            "src": "2670:5:0",
+                            "src": "2664:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                               "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -4456,7 +4456,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 324,
-                            "src": "2676:5:0",
+                            "src": "2670:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_string_memory_ptr",
                               "typeString": "string memory"
@@ -4467,7 +4467,7 @@
                           "isPure": false,
                           "lValueRequested": false,
                           "nodeType": "IndexAccess",
-                          "src": "2670:12:0",
+                          "src": "2664:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_struct$_Poll_$21_storage",
                             "typeString": "struct Types.Poll storage ref"
@@ -4481,7 +4481,7 @@
                         "memberName": "createdAt",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": 11,
-                        "src": "2670:22:0",
+                        "src": "2664:22:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -4498,7 +4498,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 29,
-                            "src": "2700:5:0",
+                            "src": "2692:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                               "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -4512,7 +4512,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 324,
-                            "src": "2706:5:0",
+                            "src": "2698:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_string_memory_ptr",
                               "typeString": "string memory"
@@ -4523,7 +4523,7 @@
                           "isPure": false,
                           "lValueRequested": false,
                           "nodeType": "IndexAccess",
-                          "src": "2700:12:0",
+                          "src": "2692:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_struct$_Poll_$21_storage",
                             "typeString": "struct Types.Poll storage ref"
@@ -4537,7 +4537,7 @@
                         "memberName": "kind",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": 13,
-                        "src": "2700:17:0",
+                        "src": "2692:17:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_string_storage",
                           "typeString": "string storage ref"
@@ -4554,7 +4554,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 29,
-                            "src": "2725:5:0",
+                            "src": "2715:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                               "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -4568,7 +4568,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 324,
-                            "src": "2731:5:0",
+                            "src": "2721:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_string_memory_ptr",
                               "typeString": "string memory"
@@ -4579,7 +4579,7 @@
                           "isPure": false,
                           "lValueRequested": false,
                           "nodeType": "IndexAccess",
-                          "src": "2725:12:0",
+                          "src": "2715:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_struct$_Poll_$21_storage",
                             "typeString": "struct Types.Poll storage ref"
@@ -4593,7 +4593,7 @@
                         "memberName": "target",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": 15,
-                        "src": "2725:19:0",
+                        "src": "2715:19:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -4612,7 +4612,7 @@
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
                               "referencedDeclaration": 29,
-                              "src": "2752:5:0",
+                              "src": "2740:5:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                 "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -4626,7 +4626,7 @@
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
                               "referencedDeclaration": 324,
-                              "src": "2758:5:0",
+                              "src": "2746:5:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_string_memory_ptr",
                                 "typeString": "string memory"
@@ -4637,7 +4637,7 @@
                             "isPure": false,
                             "lValueRequested": false,
                             "nodeType": "IndexAccess",
-                            "src": "2752:12:0",
+                            "src": "2740:12:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_struct$_Poll_$21_storage",
                               "typeString": "struct Types.Poll storage ref"
@@ -4651,7 +4651,7 @@
                           "memberName": "contributors",
                           "nodeType": "MemberAccess",
                           "referencedDeclaration": 18,
-                          "src": "2752:25:0",
+                          "src": "2740:25:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_array$_t_address_$dyn_storage",
                             "typeString": "address[] storage ref"
@@ -4665,7 +4665,7 @@
                         "memberName": "length",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": null,
-                        "src": "2752:32:0",
+                        "src": "2740:32:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -4679,7 +4679,7 @@
                     "isPure": false,
                     "lValueRequested": false,
                     "nodeType": "TupleExpression",
-                    "src": "2582:208:0",
+                    "src": "2584:194:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$_t_address_$_t_string_storage_$_t_string_storage_$_t_uint256_$_t_string_storage_$_t_uint256_$_t_uint256_$",
                       "typeString": "tuple(address,string storage ref,string storage ref,uint256,string storage ref,uint256,uint256)"
@@ -4688,7 +4688,7 @@
                   "functionReturnParameters": 340,
                   "id": 371,
                   "nodeType": "Return",
-                  "src": "2575:215:0"
+                  "src": "2577:201:0"
                 }
               ]
             },
@@ -4710,7 +4710,7 @@
                   "name": "title",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2451:12:0",
+                  "src": "2453:12:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -4721,7 +4721,7 @@
                     "id": 323,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2451:6:0",
+                    "src": "2453:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -4731,7 +4731,7 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2450:14:0"
+              "src": "2452:14:0"
             },
             "payable": false,
             "returnParameters": {
@@ -4744,7 +4744,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2491:7:0",
+                  "src": "2493:7:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -4755,7 +4755,7 @@
                     "id": 326,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2491:7:0",
+                    "src": "2493:7:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
                       "typeString": "address"
@@ -4770,7 +4770,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2504:6:0",
+                  "src": "2506:6:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -4781,7 +4781,7 @@
                     "id": 328,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2504:6:0",
+                    "src": "2506:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -4796,7 +4796,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2516:6:0",
+                  "src": "2518:6:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -4807,7 +4807,7 @@
                     "id": 330,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2516:6:0",
+                    "src": "2518:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -4822,7 +4822,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2528:4:0",
+                  "src": "2530:4:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -4833,7 +4833,7 @@
                     "id": 332,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2528:4:0",
+                    "src": "2530:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -4848,7 +4848,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2538:6:0",
+                  "src": "2540:6:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -4859,7 +4859,7 @@
                     "id": 334,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2538:6:0",
+                    "src": "2540:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -4874,7 +4874,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2550:4:0",
+                  "src": "2552:4:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -4885,7 +4885,7 @@
                     "id": 336,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2550:4:0",
+                    "src": "2552:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -4900,7 +4900,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2560:4:0",
+                  "src": "2562:4:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -4911,7 +4911,7 @@
                     "id": 338,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2560:4:0",
+                    "src": "2562:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -4921,20 +4921,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2485:83:0"
+              "src": "2487:83:0"
             },
             "scope": 374,
-            "src": "2434:362:0",
+            "src": "2436:348:0",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
           }
         ],
         "scope": 375,
-        "src": "326:2473:0"
+        "src": "326:2461:0"
       }
     ],
-    "src": "0:2800:0"
+    "src": "0:2788:0"
   },
   "legacyAST": {
     "absolutePath": "/Users/jules/WebstormProjects/pollchain/contracts/PollChain.sol",
@@ -6833,7 +6833,7 @@
             "body": {
               "id": 321,
               "nodeType": "Block",
-              "src": "1353:1077:0",
+              "src": "1353:1079:0",
               "statements": [
                 {
                   "assignments": [
@@ -7887,11 +7887,11 @@
                   "falseBody": null,
                   "id": 318,
                   "nodeType": "IfStatement",
-                  "src": "1744:663:0",
+                  "src": "1744:665:0",
                   "trueBody": {
                     "id": 317,
                     "nodeType": "Block",
-                    "src": "1795:612:0",
+                    "src": "1795:614:0",
                     "statements": [
                       {
                         "expression": {
@@ -8041,7 +8041,7 @@
                             "name": "contributorsSponsoredLength",
                             "nodeType": "VariableDeclaration",
                             "scope": 322,
-                            "src": "1860:32:0",
+                            "src": "1862:32:0",
                             "stateVariable": false,
                             "storageLocation": "default",
                             "typeDescriptions": {
@@ -8052,7 +8052,7 @@
                               "id": 243,
                               "name": "uint",
                               "nodeType": "ElementaryTypeName",
-                              "src": "1860:4:0",
+                              "src": "1862:4:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
@@ -8076,7 +8076,7 @@
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
                                 "referencedDeclaration": 29,
-                                "src": "1895:5:0",
+                                "src": "1897:5:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                   "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -8090,7 +8090,7 @@
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
                                 "referencedDeclaration": 153,
-                                "src": "1901:18:0",
+                                "src": "1903:18:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_string_memory_ptr",
                                   "typeString": "string memory"
@@ -8101,7 +8101,7 @@
                               "isPure": false,
                               "lValueRequested": false,
                               "nodeType": "IndexAccess",
-                              "src": "1895:25:0",
+                              "src": "1897:25:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_struct$_Poll_$21_storage",
                                 "typeString": "struct Types.Poll storage ref"
@@ -8115,7 +8115,7 @@
                             "memberName": "contributors",
                             "nodeType": "MemberAccess",
                             "referencedDeclaration": 18,
-                            "src": "1895:38:0",
+                            "src": "1897:38:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_array$_t_address_$dyn_storage",
                               "typeString": "address[] storage ref"
@@ -8129,14 +8129,14 @@
                           "memberName": "length",
                           "nodeType": "MemberAccess",
                           "referencedDeclaration": null,
-                          "src": "1895:45:0",
+                          "src": "1897:45:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
                           }
                         },
                         "nodeType": "VariableDeclarationStatement",
-                        "src": "1860:80:0"
+                        "src": "1862:80:0"
                       },
                       {
                         "expression": {
@@ -8160,7 +8160,7 @@
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
                                 "referencedDeclaration": 244,
-                                "src": "1957:27:0",
+                                "src": "1959:27:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
                                   "typeString": "uint256"
@@ -8179,7 +8179,7 @@
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
                                     "referencedDeclaration": 29,
-                                    "src": "1988:5:0",
+                                    "src": "1990:5:0",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                       "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -8193,7 +8193,7 @@
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
                                     "referencedDeclaration": 153,
-                                    "src": "1994:18:0",
+                                    "src": "1996:18:0",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_string_memory_ptr",
                                       "typeString": "string memory"
@@ -8204,7 +8204,7 @@
                                   "isPure": false,
                                   "lValueRequested": false,
                                   "nodeType": "IndexAccess",
-                                  "src": "1988:25:0",
+                                  "src": "1990:25:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_struct$_Poll_$21_storage",
                                     "typeString": "struct Types.Poll storage ref"
@@ -8218,13 +8218,13 @@
                                 "memberName": "target",
                                 "nodeType": "MemberAccess",
                                 "referencedDeclaration": 15,
-                                "src": "1988:32:0",
+                                "src": "1990:32:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
                                   "typeString": "uint256"
                                 }
                               },
-                              "src": "1957:63:0",
+                              "src": "1959:63:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_bool",
                                 "typeString": "bool"
@@ -8246,7 +8246,7 @@
                               487
                             ],
                             "referencedDeclaration": 486,
-                            "src": "1949:7:0",
+                            "src": "1951:7:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
                               "typeString": "function (bool) pure"
@@ -8260,7 +8260,7 @@
                           "lValueRequested": false,
                           "names": [],
                           "nodeType": "FunctionCall",
-                          "src": "1949:72:0",
+                          "src": "1951:72:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_tuple$__$",
                             "typeString": "tuple()"
@@ -8268,13 +8268,13 @@
                         },
                         "id": 259,
                         "nodeType": "ExpressionStatement",
-                        "src": "1949:72:0"
+                        "src": "1951:72:0"
                       },
                       {
                         "body": {
                           "id": 282,
                           "nodeType": "Block",
-                          "src": "2074:85:0",
+                          "src": "2076:85:0",
                           "statements": [
                             {
                               "expression": {
@@ -8304,7 +8304,7 @@
                                             "nodeType": "Identifier",
                                             "overloadedDeclarations": [],
                                             "referencedDeclaration": 29,
-                                            "src": "2093:5:0",
+                                            "src": "2095:5:0",
                                             "typeDescriptions": {
                                               "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                               "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -8318,7 +8318,7 @@
                                             "nodeType": "Identifier",
                                             "overloadedDeclarations": [],
                                             "referencedDeclaration": 153,
-                                            "src": "2099:18:0",
+                                            "src": "2101:18:0",
                                             "typeDescriptions": {
                                               "typeIdentifier": "t_string_memory_ptr",
                                               "typeString": "string memory"
@@ -8329,7 +8329,7 @@
                                           "isPure": false,
                                           "lValueRequested": false,
                                           "nodeType": "IndexAccess",
-                                          "src": "2093:25:0",
+                                          "src": "2095:25:0",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_struct$_Poll_$21_storage",
                                             "typeString": "struct Types.Poll storage ref"
@@ -8343,7 +8343,7 @@
                                         "memberName": "contributors",
                                         "nodeType": "MemberAccess",
                                         "referencedDeclaration": 18,
-                                        "src": "2093:38:0",
+                                        "src": "2095:38:0",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_array$_t_address_$dyn_storage",
                                           "typeString": "address[] storage ref"
@@ -8357,7 +8357,7 @@
                                         "nodeType": "Identifier",
                                         "overloadedDeclarations": [],
                                         "referencedDeclaration": 261,
-                                        "src": "2132:1:0",
+                                        "src": "2134:1:0",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_uint256",
                                           "typeString": "uint256"
@@ -8368,7 +8368,7 @@
                                       "isPure": false,
                                       "lValueRequested": false,
                                       "nodeType": "IndexAccess",
-                                      "src": "2093:41:0",
+                                      "src": "2095:41:0",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_address",
                                         "typeString": "address"
@@ -8385,7 +8385,7 @@
                                         "nodeType": "Identifier",
                                         "overloadedDeclarations": [],
                                         "referencedDeclaration": 483,
-                                        "src": "2138:3:0",
+                                        "src": "2140:3:0",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_magic_message",
                                           "typeString": "msg"
@@ -8399,13 +8399,13 @@
                                       "memberName": "sender",
                                       "nodeType": "MemberAccess",
                                       "referencedDeclaration": null,
-                                      "src": "2138:10:0",
+                                      "src": "2140:10:0",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_address",
                                         "typeString": "address"
                                       }
                                     },
-                                    "src": "2093:55:0",
+                                    "src": "2095:55:0",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_bool",
                                       "typeString": "bool"
@@ -8427,7 +8427,7 @@
                                     487
                                   ],
                                   "referencedDeclaration": 486,
-                                  "src": "2085:7:0",
+                                  "src": "2087:7:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
                                     "typeString": "function (bool) pure"
@@ -8441,7 +8441,7 @@
                                 "lValueRequested": false,
                                 "names": [],
                                 "nodeType": "FunctionCall",
-                                "src": "2085:64:0",
+                                "src": "2087:64:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_tuple$__$",
                                   "typeString": "tuple()"
@@ -8449,7 +8449,7 @@
                               },
                               "id": 281,
                               "nodeType": "ExpressionStatement",
-                              "src": "2085:64:0"
+                              "src": "2087:64:0"
                             }
                           ]
                         },
@@ -8471,7 +8471,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 261,
-                            "src": "2045:1:0",
+                            "src": "2047:1:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
                               "typeString": "uint256"
@@ -8486,13 +8486,13 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 187,
-                            "src": "2049:18:0",
+                            "src": "2051:18:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
                               "typeString": "uint256"
                             }
                           },
-                          "src": "2045:22:0",
+                          "src": "2047:22:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bool",
                             "typeString": "bool"
@@ -8510,7 +8510,7 @@
                               "name": "j",
                               "nodeType": "VariableDeclaration",
                               "scope": 322,
-                              "src": "2035:6:0",
+                              "src": "2037:6:0",
                               "stateVariable": false,
                               "storageLocation": "default",
                               "typeDescriptions": {
@@ -8521,7 +8521,7 @@
                                 "id": 260,
                                 "name": "uint",
                                 "nodeType": "ElementaryTypeName",
-                                "src": "2035:4:0",
+                                "src": "2037:4:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
                                   "typeString": "uint256"
@@ -8542,7 +8542,7 @@
                             "kind": "number",
                             "lValueRequested": false,
                             "nodeType": "Literal",
-                            "src": "2042:1:0",
+                            "src": "2044:1:0",
                             "subdenomination": null,
                             "typeDescriptions": {
                               "typeIdentifier": "t_rational_0_by_1",
@@ -8551,7 +8551,7 @@
                             "value": "0"
                           },
                           "nodeType": "VariableDeclarationStatement",
-                          "src": "2035:8:0"
+                          "src": "2037:8:0"
                         },
                         "loopExpression": {
                           "expression": {
@@ -8564,7 +8564,7 @@
                             "nodeType": "UnaryOperation",
                             "operator": "++",
                             "prefix": false,
-                            "src": "2069:3:0",
+                            "src": "2071:3:0",
                             "subExpression": {
                               "argumentTypes": null,
                               "id": 267,
@@ -8572,7 +8572,7 @@
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
                               "referencedDeclaration": 261,
-                              "src": "2069:1:0",
+                              "src": "2071:1:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
@@ -8585,10 +8585,10 @@
                           },
                           "id": 269,
                           "nodeType": "ExpressionStatement",
-                          "src": "2069:3:0"
+                          "src": "2071:3:0"
                         },
                         "nodeType": "ForStatement",
-                        "src": "2030:129:0"
+                        "src": "2032:129:0"
                       },
                       {
                         "expression": {
@@ -8603,7 +8603,7 @@
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
                                 "referencedDeclaration": 483,
-                                "src": "2211:3:0",
+                                "src": "2213:3:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
                                   "typeString": "msg"
@@ -8617,7 +8617,7 @@
                               "memberName": "sender",
                               "nodeType": "MemberAccess",
                               "referencedDeclaration": null,
-                              "src": "2211:10:0",
+                              "src": "2213:10:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_address",
                                 "typeString": "address"
@@ -8642,7 +8642,7 @@
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
                                   "referencedDeclaration": 29,
-                                  "src": "2167:5:0",
+                                  "src": "2169:5:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                     "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -8656,7 +8656,7 @@
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
                                   "referencedDeclaration": 153,
-                                  "src": "2173:18:0",
+                                  "src": "2175:18:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_string_memory_ptr",
                                     "typeString": "string memory"
@@ -8667,7 +8667,7 @@
                                 "isPure": false,
                                 "lValueRequested": false,
                                 "nodeType": "IndexAccess",
-                                "src": "2167:25:0",
+                                "src": "2169:25:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_struct$_Poll_$21_storage",
                                   "typeString": "struct Types.Poll storage ref"
@@ -8681,7 +8681,7 @@
                               "memberName": "contributors",
                               "nodeType": "MemberAccess",
                               "referencedDeclaration": 18,
-                              "src": "2167:38:0",
+                              "src": "2169:38:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_array$_t_address_$dyn_storage",
                                 "typeString": "address[] storage ref"
@@ -8695,7 +8695,7 @@
                             "memberName": "push",
                             "nodeType": "MemberAccess",
                             "referencedDeclaration": null,
-                            "src": "2167:43:0",
+                            "src": "2169:43:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_arraypush_nonpayable$_t_address_$returns$_t_uint256_$",
                               "typeString": "function (address) returns (uint256)"
@@ -8709,7 +8709,7 @@
                           "lValueRequested": false,
                           "names": [],
                           "nodeType": "FunctionCall",
-                          "src": "2167:55:0",
+                          "src": "2169:55:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -8717,7 +8717,7 @@
                         },
                         "id": 292,
                         "nodeType": "ExpressionStatement",
-                        "src": "2167:55:0"
+                        "src": "2169:55:0"
                       },
                       {
                         "condition": {
@@ -8727,7 +8727,7 @@
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 155,
-                          "src": "2234:12:0",
+                          "src": "2236:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bool",
                             "typeString": "bool"
@@ -8736,11 +8736,11 @@
                         "falseBody": null,
                         "id": 308,
                         "nodeType": "IfStatement",
-                        "src": "2231:135:0",
+                        "src": "2233:135:0",
                         "trueBody": {
                           "id": 307,
                           "nodeType": "Block",
-                          "src": "2247:119:0",
+                          "src": "2249:119:0",
                           "statements": [
                             {
                               "expression": {
@@ -8761,7 +8761,7 @@
                                       "nodeType": "Identifier",
                                       "overloadedDeclarations": [],
                                       "referencedDeclaration": 29,
-                                      "src": "2258:5:0",
+                                      "src": "2260:5:0",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                         "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -8775,7 +8775,7 @@
                                       "nodeType": "Identifier",
                                       "overloadedDeclarations": [],
                                       "referencedDeclaration": 153,
-                                      "src": "2264:18:0",
+                                      "src": "2266:18:0",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_string_memory_ptr",
                                         "typeString": "string memory"
@@ -8786,7 +8786,7 @@
                                     "isPure": false,
                                     "lValueRequested": false,
                                     "nodeType": "IndexAccess",
-                                    "src": "2258:25:0",
+                                    "src": "2260:25:0",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_struct$_Poll_$21_storage",
                                       "typeString": "struct Types.Poll storage ref"
@@ -8800,7 +8800,7 @@
                                   "memberName": "contributorsReject",
                                   "nodeType": "MemberAccess",
                                   "referencedDeclaration": 20,
-                                  "src": "2258:44:0",
+                                  "src": "2260:44:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_uint256",
                                     "typeString": "uint256"
@@ -8821,7 +8821,7 @@
                                       "kind": "number",
                                       "lValueRequested": false,
                                       "nodeType": "Literal",
-                                      "src": "2354:1:0",
+                                      "src": "2356:1:0",
                                       "subdenomination": null,
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_rational_1_by_1",
@@ -8848,7 +8848,7 @@
                                           "nodeType": "Identifier",
                                           "overloadedDeclarations": [],
                                           "referencedDeclaration": 29,
-                                          "src": "2305:5:0",
+                                          "src": "2307:5:0",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                             "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -8862,7 +8862,7 @@
                                           "nodeType": "Identifier",
                                           "overloadedDeclarations": [],
                                           "referencedDeclaration": 153,
-                                          "src": "2311:18:0",
+                                          "src": "2313:18:0",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_string_memory_ptr",
                                             "typeString": "string memory"
@@ -8873,7 +8873,7 @@
                                         "isPure": false,
                                         "lValueRequested": false,
                                         "nodeType": "IndexAccess",
-                                        "src": "2305:25:0",
+                                        "src": "2307:25:0",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_struct$_Poll_$21_storage",
                                           "typeString": "struct Types.Poll storage ref"
@@ -8887,7 +8887,7 @@
                                       "memberName": "contributorsReject",
                                       "nodeType": "MemberAccess",
                                       "referencedDeclaration": 20,
-                                      "src": "2305:44:0",
+                                      "src": "2307:44:0",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_uint256",
                                         "typeString": "uint256"
@@ -8901,7 +8901,7 @@
                                     "memberName": "add",
                                     "nodeType": "MemberAccess",
                                     "referencedDeclaration": 467,
-                                    "src": "2305:48:0",
+                                    "src": "2307:48:0",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
                                       "typeString": "function (uint256,uint256) pure returns (uint256)"
@@ -8915,13 +8915,13 @@
                                   "lValueRequested": false,
                                   "names": [],
                                   "nodeType": "FunctionCall",
-                                  "src": "2305:51:0",
+                                  "src": "2307:51:0",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_uint256",
                                     "typeString": "uint256"
                                   }
                                 },
-                                "src": "2258:98:0",
+                                "src": "2260:98:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
                                   "typeString": "uint256"
@@ -8929,7 +8929,7 @@
                               },
                               "id": 306,
                               "nodeType": "ExpressionStatement",
-                              "src": "2258:98:0"
+                              "src": "2260:98:0"
                             }
                           ]
                         }
@@ -8945,7 +8945,7 @@
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
                               "referencedDeclaration": 171,
-                              "src": "2394:4:0",
+                              "src": "2396:4:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
@@ -8968,7 +8968,7 @@
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
                                 "referencedDeclaration": 483,
-                                "src": "2374:3:0",
+                                "src": "2376:3:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
                                   "typeString": "msg"
@@ -8982,7 +8982,7 @@
                               "memberName": "sender",
                               "nodeType": "MemberAccess",
                               "referencedDeclaration": null,
-                              "src": "2374:10:0",
+                              "src": "2376:10:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_address",
                                 "typeString": "address"
@@ -8996,7 +8996,7 @@
                             "memberName": "transfer",
                             "nodeType": "MemberAccess",
                             "referencedDeclaration": null,
-                            "src": "2374:19:0",
+                            "src": "2376:19:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_transfer_nonpayable$_t_uint256_$returns$__$",
                               "typeString": "function (uint256)"
@@ -9010,7 +9010,7 @@
                           "lValueRequested": false,
                           "names": [],
                           "nodeType": "FunctionCall",
-                          "src": "2374:25:0",
+                          "src": "2376:25:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_tuple$__$",
                             "typeString": "tuple()"
@@ -9018,7 +9018,7 @@
                         },
                         "id": 316,
                         "nodeType": "ExpressionStatement",
-                        "src": "2374:25:0"
+                        "src": "2376:25:0"
                       }
                     ]
                   }
@@ -9034,7 +9034,7 @@
                     "kind": "bool",
                     "lValueRequested": false,
                     "nodeType": "Literal",
-                    "src": "2420:4:0",
+                    "src": "2422:4:0",
                     "subdenomination": null,
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
@@ -9045,7 +9045,7 @@
                   "functionReturnParameters": 159,
                   "id": 320,
                   "nodeType": "Return",
-                  "src": "2413:11:0"
+                  "src": "2415:11:0"
                 }
               ]
             },
@@ -9177,7 +9177,7 @@
               "src": "1339:14:0"
             },
             "scope": 374,
-            "src": "1232:1198:0",
+            "src": "1232:1200:0",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
@@ -9186,7 +9186,7 @@
             "body": {
               "id": 372,
               "nodeType": "Block",
-              "src": "2568:228:0",
+              "src": "2570:214:0",
               "statements": [
                 {
                   "expression": {
@@ -9259,7 +9259,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 29,
-                            "src": "2618:5:0",
+                            "src": "2616:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                               "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -9273,7 +9273,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 324,
-                            "src": "2624:5:0",
+                            "src": "2622:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_string_memory_ptr",
                               "typeString": "string memory"
@@ -9284,7 +9284,7 @@
                           "isPure": false,
                           "lValueRequested": false,
                           "nodeType": "IndexAccess",
-                          "src": "2618:12:0",
+                          "src": "2616:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_struct$_Poll_$21_storage",
                             "typeString": "struct Types.Poll storage ref"
@@ -9298,7 +9298,7 @@
                         "memberName": "title",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": 7,
-                        "src": "2618:18:0",
+                        "src": "2616:18:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_string_storage",
                           "typeString": "string storage ref"
@@ -9315,7 +9315,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 29,
-                            "src": "2644:5:0",
+                            "src": "2640:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                               "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -9329,7 +9329,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 324,
-                            "src": "2650:5:0",
+                            "src": "2646:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_string_memory_ptr",
                               "typeString": "string memory"
@@ -9340,7 +9340,7 @@
                           "isPure": false,
                           "lValueRequested": false,
                           "nodeType": "IndexAccess",
-                          "src": "2644:12:0",
+                          "src": "2640:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_struct$_Poll_$21_storage",
                             "typeString": "struct Types.Poll storage ref"
@@ -9354,7 +9354,7 @@
                         "memberName": "query",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": 9,
-                        "src": "2644:18:0",
+                        "src": "2640:18:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_string_storage",
                           "typeString": "string storage ref"
@@ -9371,7 +9371,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 29,
-                            "src": "2670:5:0",
+                            "src": "2664:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                               "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -9385,7 +9385,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 324,
-                            "src": "2676:5:0",
+                            "src": "2670:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_string_memory_ptr",
                               "typeString": "string memory"
@@ -9396,7 +9396,7 @@
                           "isPure": false,
                           "lValueRequested": false,
                           "nodeType": "IndexAccess",
-                          "src": "2670:12:0",
+                          "src": "2664:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_struct$_Poll_$21_storage",
                             "typeString": "struct Types.Poll storage ref"
@@ -9410,7 +9410,7 @@
                         "memberName": "createdAt",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": 11,
-                        "src": "2670:22:0",
+                        "src": "2664:22:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -9427,7 +9427,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 29,
-                            "src": "2700:5:0",
+                            "src": "2692:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                               "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -9441,7 +9441,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 324,
-                            "src": "2706:5:0",
+                            "src": "2698:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_string_memory_ptr",
                               "typeString": "string memory"
@@ -9452,7 +9452,7 @@
                           "isPure": false,
                           "lValueRequested": false,
                           "nodeType": "IndexAccess",
-                          "src": "2700:12:0",
+                          "src": "2692:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_struct$_Poll_$21_storage",
                             "typeString": "struct Types.Poll storage ref"
@@ -9466,7 +9466,7 @@
                         "memberName": "kind",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": 13,
-                        "src": "2700:17:0",
+                        "src": "2692:17:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_string_storage",
                           "typeString": "string storage ref"
@@ -9483,7 +9483,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 29,
-                            "src": "2725:5:0",
+                            "src": "2715:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                               "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -9497,7 +9497,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 324,
-                            "src": "2731:5:0",
+                            "src": "2721:5:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_string_memory_ptr",
                               "typeString": "string memory"
@@ -9508,7 +9508,7 @@
                           "isPure": false,
                           "lValueRequested": false,
                           "nodeType": "IndexAccess",
-                          "src": "2725:12:0",
+                          "src": "2715:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_struct$_Poll_$21_storage",
                             "typeString": "struct Types.Poll storage ref"
@@ -9522,7 +9522,7 @@
                         "memberName": "target",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": 15,
-                        "src": "2725:19:0",
+                        "src": "2715:19:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -9541,7 +9541,7 @@
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
                               "referencedDeclaration": 29,
-                              "src": "2752:5:0",
+                              "src": "2740:5:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_mapping$_t_string_memory_$_t_struct$_Poll_$21_storage_$",
                                 "typeString": "mapping(string memory => struct Types.Poll storage ref)"
@@ -9555,7 +9555,7 @@
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
                               "referencedDeclaration": 324,
-                              "src": "2758:5:0",
+                              "src": "2746:5:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_string_memory_ptr",
                                 "typeString": "string memory"
@@ -9566,7 +9566,7 @@
                             "isPure": false,
                             "lValueRequested": false,
                             "nodeType": "IndexAccess",
-                            "src": "2752:12:0",
+                            "src": "2740:12:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_struct$_Poll_$21_storage",
                               "typeString": "struct Types.Poll storage ref"
@@ -9580,7 +9580,7 @@
                           "memberName": "contributors",
                           "nodeType": "MemberAccess",
                           "referencedDeclaration": 18,
-                          "src": "2752:25:0",
+                          "src": "2740:25:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_array$_t_address_$dyn_storage",
                             "typeString": "address[] storage ref"
@@ -9594,7 +9594,7 @@
                         "memberName": "length",
                         "nodeType": "MemberAccess",
                         "referencedDeclaration": null,
-                        "src": "2752:32:0",
+                        "src": "2740:32:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -9608,7 +9608,7 @@
                     "isPure": false,
                     "lValueRequested": false,
                     "nodeType": "TupleExpression",
-                    "src": "2582:208:0",
+                    "src": "2584:194:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$_t_address_$_t_string_storage_$_t_string_storage_$_t_uint256_$_t_string_storage_$_t_uint256_$_t_uint256_$",
                       "typeString": "tuple(address,string storage ref,string storage ref,uint256,string storage ref,uint256,uint256)"
@@ -9617,7 +9617,7 @@
                   "functionReturnParameters": 340,
                   "id": 371,
                   "nodeType": "Return",
-                  "src": "2575:215:0"
+                  "src": "2577:201:0"
                 }
               ]
             },
@@ -9639,7 +9639,7 @@
                   "name": "title",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2451:12:0",
+                  "src": "2453:12:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -9650,7 +9650,7 @@
                     "id": 323,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2451:6:0",
+                    "src": "2453:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -9660,7 +9660,7 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2450:14:0"
+              "src": "2452:14:0"
             },
             "payable": false,
             "returnParameters": {
@@ -9673,7 +9673,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2491:7:0",
+                  "src": "2493:7:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -9684,7 +9684,7 @@
                     "id": 326,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2491:7:0",
+                    "src": "2493:7:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
                       "typeString": "address"
@@ -9699,7 +9699,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2504:6:0",
+                  "src": "2506:6:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -9710,7 +9710,7 @@
                     "id": 328,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2504:6:0",
+                    "src": "2506:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -9725,7 +9725,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2516:6:0",
+                  "src": "2518:6:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -9736,7 +9736,7 @@
                     "id": 330,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2516:6:0",
+                    "src": "2518:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -9751,7 +9751,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2528:4:0",
+                  "src": "2530:4:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -9762,7 +9762,7 @@
                     "id": 332,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2528:4:0",
+                    "src": "2530:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -9777,7 +9777,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2538:6:0",
+                  "src": "2540:6:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -9788,7 +9788,7 @@
                     "id": 334,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2538:6:0",
+                    "src": "2540:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -9803,7 +9803,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2550:4:0",
+                  "src": "2552:4:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -9814,7 +9814,7 @@
                     "id": 336,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2550:4:0",
+                    "src": "2552:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -9829,7 +9829,7 @@
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "scope": 373,
-                  "src": "2560:4:0",
+                  "src": "2562:4:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -9840,7 +9840,7 @@
                     "id": 338,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2560:4:0",
+                    "src": "2562:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -9850,20 +9850,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2485:83:0"
+              "src": "2487:83:0"
             },
             "scope": 374,
-            "src": "2434:362:0",
+            "src": "2436:348:0",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
           }
         ],
         "scope": 375,
-        "src": "326:2473:0"
+        "src": "326:2461:0"
       }
     ],
-    "src": "0:2800:0"
+    "src": "0:2788:0"
   },
   "compiler": {
     "name": "solc",
@@ -9871,5 +9871,5 @@
   },
   "networks": {},
   "schemaVersion": "2.0.0",
-  "updatedAt": "2018-06-03T08:55:40.138Z"
+  "updatedAt": "2018-06-03T10:54:47.591Z"
 }
