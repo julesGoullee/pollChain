@@ -16,8 +16,8 @@
       >
         <div class="card-body">
           <h5 class="card-title">{{poll.title}}</h5>
-          <div>Contributors: {{poll.contributors}}</div>
-          <div>target: {{poll.target}}</div>
+          <div><strong>Contributors:</strong> {{poll.contributors}}</div>
+          <div><strong>target:</strong> {{poll.target}}</div>
           <p class="card-text">{{poll.query}}</p>
           <button class="btn btn-primary" type="button" @click="validateVote(poll.title)">I sign</button>
         </div>
@@ -75,12 +75,16 @@
         </div>
       </div>
 
+      
+
       <div class="bloc-title">
-        <div id="small-title">VOTING FOR THE NEXT PETITION</div>
-        <div id="big-title">Upgrade the  3 next<br>
+        <div class="small-title">VOTING FOR THE NEXT PETITION</div>
+        <div class="big-title">Upgrade the  3 next<br>
           petition for next month
         </div>
       </div>
+
+      
 
       <div class="card w-75">
         <div class="card-body">
