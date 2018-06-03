@@ -25,15 +25,16 @@ const actions = {
 
     for(let i = 0; i < pollsCount; i++){
 
-      const pollQuery = await storePollChain.data.pollsIndex(i);
-      const rawPoll = await storePollChain.data.getPoll(pollQuery);
+      const pollTitle = await storePollChain.data.pollsIndex(i);
+      const rawPoll = await storePollChain.data.getPoll(pollTitle);
       polls.push({
         creator: rawPoll[0],
-        query: rawPoll[1],
-        createdAt: moment(rawPoll[2].toNumber() * 1000),
-        kind: rawPoll[3],
-        target: rawPoll[4].toNumber(),
-        contributors: rawPoll[5].toNumber(),
+        title: rawPoll[1],
+        query: rawPoll[2],
+        createdAt: moment(rawPoll[3].toNumber() * 1000),
+        kind: rawPoll[4],
+        target: rawPoll[5].toNumber(),
+        contributors: rawPoll[6].toNumber(),
       });
 
     }
@@ -41,7 +42,7 @@ const actions = {
     commit('polls', { polls });
 
   },
-  addPoll: async ({ state, commit, dispatch }, { query, target, isSponsoring }) => {
+  addPoll: async ({ state, commit, dispatch }, { title, query, target, isSponsoring }) => {
     Errors.assert(storePollChain.data, 'pollChain_undefined');
 
     let value = 0;
@@ -52,7 +53,7 @@ const actions = {
 
     }
 
-    const res = await storePollChain.data.addPoll(query, target, isSponsoring, {
+    const res = await storePollChain.data.addPoll(query, title, target, isSponsoring, {
       from: state.address,
       value
     });

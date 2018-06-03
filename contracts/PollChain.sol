@@ -7,6 +7,7 @@ library Types {
 
   struct Poll {
     address creator;
+    string title;
     string query;
     uint createdAt;
     string kind;
@@ -36,48 +37,88 @@ contract PollChain {
     revert();
   }
 
-  function addPoll (string query, uint target, bool isSponsoring) public payable returns (bool success){
-    polls[query].creator = msg.sender;
-    polls[query].createdAt = block.timestamp;
-    polls[query].query = query;
-    polls[query].target = target;
+  function addPoll (string query, string title, uint target, bool isSponsoring) public payable returns (bool success){
+    polls[title].creator = msg.sender;
+    polls[title].createdAt = block.timestamp;
+    polls[title].title = title;
+    polls[title].query = query;
+    polls[title].target = target;
 
     if(isSponsoring){
 
       require(msg.value == costPeerVote.mul(target));
-      polls[query].kind = "sponsoring";
+      polls[title].kind = "sponsoring";
 
     } else {
 
-      polls[query].kind = "free";
+      polls[title].kind = "free";
 
     }
 
-    pollsIndex.push(query);
+    pollsIndex.push(title);
     pollsCount = pollsCount.add(1);
     return true;
 
   }
 
-  function vote (string pollQuery) public returns (bool success){
+  function vote (string pollTitle) public returns (bool success){
 
-    require(polls[pollQuery].createdAt != 0);
-    uint contributorsLength = polls[pollQuery].contributors.length;
+    require(polls[pollTitle].createdAt != 0);
+    uint contributorsLength = polls[pollTitle].contributors.length;
 
     for (uint i=0; i < contributorsLength; i++) {
 
-      require(polls[pollQuery].contributors[i] != msg.sender);
+      require(polls[pollTitle].contributors[i] != msg.sender);
 
     }
 
-    polls[pollQuery].contributors.push(msg.sender);
+    polls[pollTitle].contributors.push(msg.sender);
 
     return true;
 
   }
+//
+//  function vote (string pollQuery, string pollQuerySponsored, bool voteRejected) public returns (bool success){
+//
+//    uint gas = gasleft();
+//    uint gasPrice = tx.gasprice;
+//    uint cost = gas.mul(gasPrice);
+//    require(polls[pollQuery].createdAt != 0);
+//    require(polls[pollQuerySponsored].createdAt != 0);
+//    uint contributorsLength = polls[pollQuery].contributors.length;
+//
+//    for (uint i=0; i < contributorsLength; i++) {
+//
+//      require(polls[pollQuery].contributors[i] != msg.sender);
+//
+//    }
+//
+//    uint contributorsSponsoredLength = polls[pollQuerySponsored].contributors.length;
+//
+//    require(contributorsSponsoredLength <= polls[pollQuerySponsored].target);
+//
+//    for (uint j=0; j < contributorsLength; j++) {
+//
+//      require(polls[pollQuerySponsored].contributors[j] != msg.sender);
+//
+//    }
+//
+//    polls[pollQuerySponsored].contributors.push(msg.sender);
+//
+//    if(voteRejected){
+//
+//      polls[pollQuerySponsored].contributorsReject = polls[pollQuerySponsored].contributorsReject.add(1);
+//
+//    }
+//
+//    msg.sender.transfer(cost);
+//    return true;
+//
+//  }
 
-  function getPoll(string query) public view returns (
+  function getPoll(string title) public view returns (
     address,
+    string,
     string,
     uint,
     string,
@@ -86,12 +127,13 @@ contract PollChain {
   ){
 
     return (
-      polls[query].creator,
-      polls[query].query,
-      polls[query].createdAt,
-      polls[query].kind,
-      polls[query].target,
-      polls[query].contributors.length
+      polls[title].creator,
+      polls[title].title,
+      polls[title].query,
+      polls[title].createdAt,
+      polls[title].kind,
+      polls[title].target,
+      polls[title].contributors.length
     );
 
   }

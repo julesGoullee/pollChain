@@ -1,21 +1,19 @@
-#small-title{
+.small-title{
     color: #9B9B9B;
     font-weight: bold;
     font-size: 14px;
 }
-#big-title{
+.big-title{
     color:#0C115E;
     font-weight: bold;
     font-size: 30px;
     line-height: 1.1;
 }
 .bloc-title{
-    width:col.12;
     margin-top: 60px;
     margin-bottom: 60px;
 }
 .question{
-    width: col.6;
 }
 .question-title{
     color:#0C115E;

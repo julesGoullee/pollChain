@@ -2,8 +2,8 @@
   <div>
     <div>
       <div class="bloc-title">
-        <div id="small-title">MY PETITION</div>
-        <div id="big-title">My petition to start <br>
+        <div class="small-title">MY PETITION</div>
+        <div class="big-title">My petition to start <br>
           to change the world
         </div>
       </div>
@@ -14,9 +14,8 @@
           This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
         </div>
         <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Save the panda in Chongqing">
-        </div>
+      </div>
 
-      
       <div>
         <div class="question-title"><label for="exampleFormControlInput1">Is this petition are sponsored ? </label>
         </div>
@@ -35,7 +34,13 @@
 
         <form id="add-poll-form" @submit="onAddPool">
           <input
-            id="add-poll"
+            id="add-poll-title"
+            type="text"
+            v-model.trim="title"
+            placeholder="Title..."
+          >
+          <input
+            id="add-poll-query"
             type="text"
             v-model.trim="query"
             placeholder="Query..."
@@ -54,38 +59,32 @@
         </form>
       </div>
 
-
-         <div class="form-group">
-        <div class="question-title"><label for="exampleFormControlInput1">Present the problem you want to solve</label></div>
+      <div class="form-group">
+        <div class="question-title"><label for="exampleFormControlInput2">Present the problem you want to solve</label></div>
         <div class="question-description">
           This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
         </div>
-        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Save the panda in Chongqing">
+        <input type="email" class="form-control" id="exampleFormControlInput2" placeholder="Save the panda in Chongqing">
+      </div>
+
+      <div class="form-group">
+        <div class="question-title"><label >Add a photo</label></div>
+        <div class="question-description">
+          This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
         </div>
 
-                <div class="form-group">
-                        <div class="question-title"><label for="exampleFormControlInput1">Add a photo</label></div>
-                            <div class="question-description">
-                              This is the first thing people will see to offer your petition. Attract their attention with a title that has come to focus on the change you are asking for support.
-                            </div>
-
-                        <div class="input-group">
-                            <span class="input-group-btn">
-                                <span class="btn btn-default btn-file">
-                                    <input type="file" id="imgInp">
-                                </span>
-                            </span>
-                        </div>
-                        <img id='img-upload'/>
-                </div>
-          </div>
-
-
-
-
+        <div class="input-group">
+            <span class="input-group-btn">
+                <span class="btn btn-default btn-file">
+                    <input type="file" id="imgInp">
+                </span>
+            </span>
+        </div>
+        <img id='img-upload'/>
+      </div>
+    </div>
 
     <button type="button" class="btn btn-success">Success</button>
-
 
     <div v-if="errors.length === 0 && isSending" id="send-waiting">
       Transaction is sending, Waiting....
@@ -98,12 +97,6 @@
       >{{ error }}</div>
     </div>
   </div>
-
-
-
-
-
-
 </template>
 
 <script>
@@ -117,6 +110,7 @@
     name: 'NewPoll',
     data: function () {
       return {
+        title: '',
         query: '',
         target: 100,
         isSponsoring: false,
@@ -133,12 +127,14 @@
         this.isSending = true;
 
         this.addPoll({
+          title: this.title,
           query: this.query,
           target: this.target,
           isSponsoring: this.isSponsoring
         })
           .then(() => {
             this.query = '';
+            this.title = '';
             this.isSending = false;
           })
           .catch(error => {
