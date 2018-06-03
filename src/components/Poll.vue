@@ -47,6 +47,7 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
+  import config from '@/../config'
   import Errors from '@/utils/errors';
   import Decimal from 'decimal.js';
   import '@/css/test.css';
@@ -101,7 +102,7 @@
           });
       },
       calcCost(){
-        return new Decimal(this.target).mul(0.1).toString();
+        return new Decimal(this.target).mul(config.COST_PEER_VOTE).div(10e17).toString();
       }
     },
 

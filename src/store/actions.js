@@ -5,6 +5,7 @@ import storePollChain from '@/store/storePollChain';
 import Network from '@/network';
 import Utils from '@/utils';
 const moment = require('moment');
+import Decimal from 'decimal.js';
 
 const actions = {
   nodeConnect: async ({ state, commit, dispatch }) => {
@@ -43,7 +44,19 @@ const actions = {
   addPoll: async ({ state, commit, dispatch }, { query, target, isSponsoring }) => {
     Errors.assert(storePollChain.data, 'pollChain_undefined');
 
-    const res = await storePollChain.data.addPoll(query, target, isSponsoring, { from: state.address });
+    let value = 0;
+
+    if(isSponsoring){
+
+      value = new Decimal(target).mul(config.COST_PEER_VOTE).toString();
+
+    }
+
+    const res = await storePollChain.data.addPoll(query, target, isSponsoring, {
+      from: state.address,
+      value
+    });
+
     await Utils.getTransactionReceiptMined(res.tx);
     await dispatch('getPolls');
 
