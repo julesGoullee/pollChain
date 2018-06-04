@@ -11,4 +11,4 @@ Self-sovereign,
 transparent
 and secure.
 
-It's live on ropsten testing network: https://pollchain.netlify.com
+It's live on ropsten testing network: https://pollchain.netlify.com, require metamask (https://metamask.io)
